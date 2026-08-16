@@ -4,6 +4,12 @@
  * in-call chat, friends, games, VIP paid features, auto-next, and media permissions.
  */
 
+const ALL_AVATARS = [
+  'avatar-fox', 'avatar-panda', 'avatar-cat', 'avatar-robot',
+  'avatar-astro', 'avatar-lion', 'avatar-shiba', 'avatar-koala',
+  'avatar-owl', 'avatar-dragon', 'avatar-tiger'
+];
+
 const AVATAR_MAP = {
   'avatar-fox': 'assets/avatar-fox.jpg',
   'avatar-panda': 'assets/avatar-panda.jpg',
@@ -11,6 +17,11 @@ const AVATAR_MAP = {
   'avatar-robot': 'assets/avatar-robot.jpg',
   'avatar-astro': 'assets/avatar-astro.jpg',
   'avatar-lion': 'assets/avatar-lion.jpg',
+  'avatar-shiba': 'assets/avatar-shiba.jpg',
+  'avatar-koala': 'assets/avatar-koala.jpg',
+  'avatar-owl': 'assets/avatar-owl.jpg',
+  'avatar-dragon': 'assets/avatar-dragon.jpg',
+  'avatar-tiger': 'assets/avatar-tiger.jpg',
   '🦊': 'assets/avatar-fox.jpg',
   '🐼': 'assets/avatar-panda.jpg',
   '🦁': 'assets/avatar-lion.jpg',
@@ -26,8 +37,15 @@ const AVATAR_MAP = {
   'avatar-6': 'assets/avatar-lion.jpg'
 };
 
+function getRandomAvatar() {
+  return ALL_AVATARS[Math.floor(Math.random() * ALL_AVATARS.length)];
+}
+
 function getAvatarSrc(avatarKey) {
-  return AVATAR_MAP[avatarKey] || 'assets/avatar-fox.jpg';
+  if (avatarKey && AVATAR_MAP[avatarKey]) {
+    return AVATAR_MAP[avatarKey];
+  }
+  return 'assets/avatar-fox.jpg';
 }
 
 class MTalkApp {
@@ -39,7 +57,14 @@ class MTalkApp {
     // User profile state
     this.sessionToken = localStorage.getItem('mtalk_session_token') || null;
     this.nickname = localStorage.getItem('mtalk_nickname') || `Guest_${Math.floor(1000 + Math.random() * 9000)}`;
-    this.avatar = localStorage.getItem('mtalk_avatar') || 'avatar-fox';
+    
+    // Assign a colorful random 3D avatar if not yet set or if legacy emoji
+    let savedAvatar = localStorage.getItem('mtalk_avatar');
+    if (!savedAvatar || savedAvatar === '🦊' || !ALL_AVATARS.includes(savedAvatar)) {
+      savedAvatar = getRandomAvatar();
+      localStorage.setItem('mtalk_avatar', savedAvatar);
+    }
+    this.avatar = savedAvatar;
     this.country = localStorage.getItem('mtalk_country') || 'GLOBAL';
     this.gender = localStorage.getItem('mtalk_gender') || 'any';
     this.isVip = localStorage.getItem('mtalk_is_vip') === 'true';

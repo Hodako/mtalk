@@ -253,11 +253,19 @@ io.on('connection', async (socket) => {
     return;
   }
 
+  // Available 3D Avatars List
+  const ALL_AVATARS = [
+    'avatar-fox', 'avatar-panda', 'avatar-cat', 'avatar-robot',
+    'avatar-astro', 'avatar-lion', 'avatar-shiba', 'avatar-koala',
+    'avatar-owl', 'avatar-dragon', 'avatar-tiger'
+  ];
+
   // Register user session
   socket.on('init-session', async (data) => {
     const sessionToken = data.sessionToken || uuidv4();
     const nickname = data.nickname || `Guest_${Math.floor(1000 + Math.random() * 9000)}`;
-    const avatar = data.avatar || `avatar-${Math.floor(1 + Math.random() * 8)}`;
+    const randomAvatar = ALL_AVATARS[Math.floor(Math.random() * ALL_AVATARS.length)];
+    const avatar = (data.avatar && ALL_AVATARS.includes(data.avatar)) ? data.avatar : (data.avatar || randomAvatar);
     const country = data.country || 'GLOBAL';
     const gender = data.gender || 'any';
 

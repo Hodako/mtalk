@@ -13,7 +13,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=1.4.0" />
+  <link rel="stylesheet" href="css/style.css?v=1.5.0" />
   
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -821,31 +821,54 @@
           </div>
 
           <div class="filter-group">
-            <label class="text-xs font-semibold text-zinc-400">Pick 3D Avatar</label>
-            <div class="grid grid-cols-3 gap-2.5 sm:gap-3">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-semibold text-zinc-400">Pick Your 3D Avatar</label>
+              <span class="text-[11px] text-indigo-400 font-medium">11 Unique Styles</span>
+            </div>
+            <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-2.5 max-h-56 overflow-y-auto p-1 chat-scroll">
               <button type="button" class="avatar-option-btn p-1.5 bg-[#18181b] rounded-xl border-2 border-indigo-500 hover:border-indigo-400 transition-all flex flex-col items-center gap-1 group" data-avatar="avatar-fox">
-                <img src="assets/avatar-fox.jpg" class="w-12 h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="Fox Avatar" />
-                <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">Fox Gamer</span>
+                <img src="assets/avatar-fox.jpg" class="w-11 h-11 sm:w-12 sm:h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="Fox Avatar" />
+                <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">Fox</span>
+              </button>
+              <button type="button" class="avatar-option-btn p-1.5 bg-[#18181b] rounded-xl border-2 border-transparent hover:border-indigo-400 transition-all flex flex-col items-center gap-1 group" data-avatar="avatar-shiba">
+                <img src="assets/avatar-shiba.jpg" class="w-11 h-11 sm:w-12 sm:h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="Shiba Avatar" />
+                <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">Shiba</span>
               </button>
               <button type="button" class="avatar-option-btn p-1.5 bg-[#18181b] rounded-xl border-2 border-transparent hover:border-indigo-400 transition-all flex flex-col items-center gap-1 group" data-avatar="avatar-panda">
-                <img src="assets/avatar-panda.jpg" class="w-12 h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="Panda Avatar" />
-                <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">Panda Chill</span>
+                <img src="assets/avatar-panda.jpg" class="w-11 h-11 sm:w-12 sm:h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="Panda Avatar" />
+                <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">Panda</span>
               </button>
               <button type="button" class="avatar-option-btn p-1.5 bg-[#18181b] rounded-xl border-2 border-transparent hover:border-indigo-400 transition-all flex flex-col items-center gap-1 group" data-avatar="avatar-cat">
-                <img src="assets/avatar-cat.jpg" class="w-12 h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="Cyber Cat Avatar" />
-                <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">Cyber Cat</span>
+                <img src="assets/avatar-cat.jpg" class="w-11 h-11 sm:w-12 sm:h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="Cyber Cat Avatar" />
+                <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">Cat</span>
+              </button>
+              <button type="button" class="avatar-option-btn p-1.5 bg-[#18181b] rounded-xl border-2 border-transparent hover:border-indigo-400 transition-all flex flex-col items-center gap-1 group" data-avatar="avatar-koala">
+                <img src="assets/avatar-koala.jpg" class="w-11 h-11 sm:w-12 sm:h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="Koala Avatar" />
+                <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">Koala</span>
+              </button>
+              <button type="button" class="avatar-option-btn p-1.5 bg-[#18181b] rounded-xl border-2 border-transparent hover:border-indigo-400 transition-all flex flex-col items-center gap-1 group" data-avatar="avatar-dragon">
+                <img src="assets/avatar-dragon.jpg" class="w-11 h-11 sm:w-12 sm:h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="Dragon Avatar" />
+                <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">Dragon</span>
               </button>
               <button type="button" class="avatar-option-btn p-1.5 bg-[#18181b] rounded-xl border-2 border-transparent hover:border-indigo-400 transition-all flex flex-col items-center gap-1 group" data-avatar="avatar-robot">
-                <img src="assets/avatar-robot.jpg" class="w-12 h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="AI Robot Avatar" />
+                <img src="assets/avatar-robot.jpg" class="w-11 h-11 sm:w-12 sm:h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="AI Robot Avatar" />
                 <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">AI Bot</span>
               </button>
               <button type="button" class="avatar-option-btn p-1.5 bg-[#18181b] rounded-xl border-2 border-transparent hover:border-indigo-400 transition-all flex flex-col items-center gap-1 group" data-avatar="avatar-astro">
-                <img src="assets/avatar-astro.jpg" class="w-12 h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="Astronaut Avatar" />
+                <img src="assets/avatar-astro.jpg" class="w-11 h-11 sm:w-12 sm:h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="Astronaut Avatar" />
                 <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">Astronaut</span>
               </button>
               <button type="button" class="avatar-option-btn p-1.5 bg-[#18181b] rounded-xl border-2 border-transparent hover:border-indigo-400 transition-all flex flex-col items-center gap-1 group" data-avatar="avatar-lion">
-                <img src="assets/avatar-lion.jpg" class="w-12 h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="Golden Lion Avatar" />
-                <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">Gold Lion</span>
+                <img src="assets/avatar-lion.jpg" class="w-11 h-11 sm:w-12 sm:h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="Golden Lion Avatar" />
+                <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">Lion</span>
+              </button>
+              <button type="button" class="avatar-option-btn p-1.5 bg-[#18181b] rounded-xl border-2 border-transparent hover:border-indigo-400 transition-all flex flex-col items-center gap-1 group" data-avatar="avatar-tiger">
+                <img src="assets/avatar-tiger.jpg" class="w-11 h-11 sm:w-12 sm:h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="Tiger Avatar" />
+                <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">Tiger</span>
+              </button>
+              <button type="button" class="avatar-option-btn p-1.5 bg-[#18181b] rounded-xl border-2 border-transparent hover:border-indigo-400 transition-all flex flex-col items-center gap-1 group" data-avatar="avatar-owl">
+                <img src="assets/avatar-owl.jpg" class="w-11 h-11 sm:w-12 sm:h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="Owl Avatar" />
+                <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">Owl</span>
               </button>
             </div>
           </div>
@@ -906,9 +929,9 @@
 
   <!-- Client JavaScript Modules -->
   <script src="/socket.io/socket.io.js"></script>
-  <script src="js/audio-effects.js?v=1.4.0"></script>
-  <script src="js/games-icebreakers.js?v=1.4.0"></script>
-  <script src="js/webrtc-manager.js?v=1.4.0"></script>
-  <script src="js/app.js?v=1.4.0"></script>
+  <script src="js/audio-effects.js?v=1.5.0"></script>
+  <script src="js/games-icebreakers.js?v=1.5.0"></script>
+  <script src="js/webrtc-manager.js?v=1.5.0"></script>
+  <script src="js/app.js?v=1.5.0"></script>
 </body>
 </html>
