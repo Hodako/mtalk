@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /data/
+
+# Sitemap
+Sitemap: https://mtalk.live/sitemap.xml

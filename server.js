@@ -239,6 +239,97 @@ function leaveCurrentRoom(socket, reason = 'partner_left') {
   socket.leave(roomId);
 }
 
+// High-Speed Matchmaking Sweeper (Runs every 100ms for instant pairing)
+function processMatchmakingSweep() {
+  for (const mode of ['voice', 'video', 'text']) {
+    const queue = waitingQueue[mode];
+    if (!queue || queue.length < 2) continue;
+
+    for (let i = 0; i < queue.length; i++) {
+      const candidate = queue[i];
+      if (!candidate || !candidate.socket || !candidate.socket.connected) {
+        queue.splice(i, 1);
+        i--;
+        continue;
+      }
+
+      const match = findMatch(candidate.socket, mode, candidate.preferences);
+      if (match) {
+        // Remove candidate as well
+        const cIdx = queue.findIndex(item => item.socket.id === candidate.socket.id);
+        if (cIdx !== -1) queue.splice(cIdx, 1);
+
+        const socket = candidate.socket;
+        const partnerSocket = match.socket;
+        const roomId = `room_${uuidv4()}`;
+
+        const userData = activeUsers.get(socket.id) || {};
+        const partnerData = activeUsers.get(partnerSocket.id) || {};
+
+        if (userData.previousPartners) {
+          userData.previousPartners.add(partnerSocket.id);
+          if (userData.previousPartners.size > 8) {
+            const first = userData.previousPartners.values().next().value;
+            userData.previousPartners.delete(first);
+          }
+        }
+        if (partnerData.previousPartners) {
+          partnerData.previousPartners.add(socket.id);
+          if (partnerData.previousPartners.size > 8) {
+            const first = partnerData.previousPartners.values().next().value;
+            partnerData.previousPartners.delete(first);
+          }
+        }
+
+        socket.join(roomId);
+        partnerSocket.join(roomId);
+        userRooms.set(socket.id, roomId);
+        userRooms.set(partnerSocket.id, roomId);
+
+        activeRooms.set(roomId, {
+          id: roomId,
+          user1: socket.id,
+          user2: partnerSocket.id,
+          mode,
+          startTime: Date.now(),
+          game: null
+        });
+
+        socket.emit('match-found', {
+          roomId,
+          mode,
+          isInitiator: true,
+          partner: {
+            nickname: partnerData.nickname || 'Stranger',
+            avatar: partnerData.avatar || 'avatar-1',
+            country: partnerData.country || 'GLOBAL',
+            topics: partnerData.topics || [],
+            sessionToken: partnerData.sessionToken
+          }
+        });
+
+        partnerSocket.emit('match-found', {
+          roomId,
+          mode,
+          isInitiator: false,
+          partner: {
+            nickname: userData.nickname || 'Stranger',
+            avatar: userData.avatar || 'avatar-1',
+            country: userData.country || 'GLOBAL',
+            topics: userData.topics || [],
+            sessionToken: userData.sessionToken
+          }
+        });
+
+        db.incrementStat('total_matches');
+        break;
+      }
+    }
+  }
+}
+
+setInterval(processMatchmakingSweep, 100);
+
 // Socket.IO Events
 io.on('connection', async (socket) => {
   const clientIp = socket.handshake.headers['cf-connecting-ip'] || 
