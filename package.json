@@ -1,7 +1,7 @@
 {
   "name": "mtalk",
   "version": "1.0.0",
-  "description": "MTalk - Modern Real-Time WebRTC Random Voice, Video & Text Chat Platform",
+  "description": "MTalk - Modern Real-Time Random Voice, Video & Text Chat Platform",
   "main": "server.js",
   "type": "module",
   "scripts": {
@@ -10,13 +10,12 @@
     "build": "node -e \"console.log('Build complete - Static assets ready.')\""
   },
   "keywords": [
-    "webrtc",
     "chat",
     "random-chat",
     "voice-call",
     "video-call",
-    "airtalk",
-    "omegle",
+    "live-chat",
+    "omegle-alternative",
     "socketio"
   ],
   "author": "MTalk Team",
