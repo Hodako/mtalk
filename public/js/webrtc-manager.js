@@ -1,27 +1,42 @@
 /**
  * MTalk WebRTC Connection Manager
- * High-reliability RTCPeerConnection with Google & Mozilla STUN servers,
- * Promise-coordinated media acquisition, race-condition free Offer/Answer exchange,
- * ICE candidate buffering, automatic ICE restart, audio visualizer integration,
+ * High-reliability RTCPeerConnection with Google, Mozilla STUN & OpenRelay TURN servers,
+ * Symmetric NAT & Multi-Wi-Fi traversal, Promise-coordinated media acquisition,
+ * race-condition free Offer/Answer exchange, ICE candidate buffering, automatic ICE restart,
  * and reliable remote track attachment.
  */
 
 const RTC_CONFIG = {
   iceServers: [
-    // Google Public STUN
+    // Primary Google Public STUN
     { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:stun1.l.google.com:19302' },
     { urls: 'stun:stun2.l.google.com:19302' },
     { urls: 'stun:stun3.l.google.com:19302' },
     { urls: 'stun:stun4.l.google.com:19302' },
+
     // Mozilla Public STUN
     { urls: 'stun:stun.services.mozilla.com' },
+
     // Sipgate Public STUN
     { urls: 'stun:stun.sipgate.net:10000' },
-    // Metered Public STUN
-    { urls: 'stun:stun.relay.metered.ca:80' }
+
+    // Free OpenRelay / Metered TURN Relay Servers (Handles Symmetric NAT & Cross-Wi-Fi)
+    {
+      urls: [
+        'turn:openrelay.metered.ca:80',
+        'turn:openrelay.metered.ca:443',
+        'turn:openrelay.metered.ca:443?transport=tcp',
+        'turns:openrelay.metered.ca:443?transport=tcp'
+      ],
+      username: 'openrelayproject',
+      credential: 'openrelayproject'
+    }
   ],
-  iceCandidatePoolSize: 10
+  iceCandidatePoolSize: 10,
+  iceTransportPolicy: 'all',
+  bundlePolicy: 'max-bundle',
+  rtcpMuxPolicy: 'require'
 };
 
 class WebRTCManager {
@@ -37,6 +52,7 @@ class WebRTCManager {
     this.isVideoOff = false;
     this.isSpeakerMuted = false;
     this.roomId = null;
+    this.rtcConfig = { ...RTC_CONFIG };
 
     // Async lock for media acquisition
     this.mediaPromise = null;
@@ -50,6 +66,24 @@ class WebRTCManager {
     this.onRemoteStream = null;
     this.onConnectionStateChange = null;
     this.onDataChannelMessage = null;
+
+    // Fetch dynamic server ICE configs
+    this.fetchIceServers();
+  }
+
+  async fetchIceServers() {
+    try {
+      const res = await fetch('/api/ice-servers');
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.iceServers && data.iceServers.length > 0) {
+          this.rtcConfig.iceServers = data.iceServers;
+          console.log('[WebRTC] Dynamic STUN/TURN servers loaded:', data.iceServers.length);
+        }
+      }
+    } catch (e) {
+      console.warn('[WebRTC] Could not fetch dynamic ICE servers, using built-in defaults:', e);
+    }
   }
 
   setRoomId(roomId) {
@@ -139,8 +173,9 @@ class WebRTCManager {
     this.closePeerConnection();
 
     console.log('[WebRTC] Creating RTCPeerConnection (Initiator:', isInitiator, ')');
+    const configToUse = this.rtcConfig || RTC_CONFIG;
     try {
-      this.peerConnection = new RTCPeerConnection(RTC_CONFIG);
+      this.peerConnection = new RTCPeerConnection(configToUse);
     } catch (e) {
       console.warn('[WebRTC] Primary RTC_CONFIG warning, using fallback:', e);
       this.peerConnection = new RTCPeerConnection({

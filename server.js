@@ -135,6 +135,41 @@ app.post('/api/report', async (req, res) => {
   res.json({ success: logged });
 });
 
+// Dynamic STUN & TURN Ice Servers configuration
+app.get('/api/ice-servers', (req, res) => {
+  const iceServers = [
+    // Standard Global STUN Servers
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun2.l.google.com:19302' },
+    { urls: 'stun:stun.services.mozilla.com' },
+    { urls: 'stun:stun.sipgate.net:10000' },
+
+    // Free OpenRelay / Metered TURN Relay Servers (Handles Symmetric NAT & Strict Wi-Fi)
+    {
+      urls: [
+        'turn:openrelay.metered.ca:80',
+        'turn:openrelay.metered.ca:443',
+        'turn:openrelay.metered.ca:443?transport=tcp',
+        'turns:openrelay.metered.ca:443?transport=tcp'
+      ],
+      username: 'openrelayproject',
+      credential: 'openrelayproject'
+    }
+  ];
+
+  // Custom environment TURN configuration support
+  if (process.env.TURN_URL && process.env.TURN_USERNAME && process.env.TURN_CREDENTIAL) {
+    iceServers.unshift({
+      urls: process.env.TURN_URL.split(',').map(u => u.trim()),
+      username: process.env.TURN_USERNAME,
+      credential: process.env.TURN_CREDENTIAL
+    });
+  }
+
+  res.json({ iceServers });
+});
+
 // Matchmaking Logic
 function findMatch(socket, mode, preferences) {
   const queue = waitingQueue[mode] || [];
