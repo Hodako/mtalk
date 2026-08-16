@@ -102,9 +102,6 @@ class MTalkApp {
     this.setupMobileGestures();
     this.setupHistoryNavigation();
     this.refreshIcons();
-
-    // Ask camera & microphone permissions immediately upon opening site
-    this.promptPermissionsOnLoad();
   }
 
   setupHistoryNavigation() {
@@ -178,24 +175,7 @@ class MTalkApp {
     }
   }
 
-  // 1. Initial Permission Request on Site Open
-  async promptPermissionsOnLoad() {
-    try {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true }).catch(async () => {
-          return await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-        });
-        if (stream) {
-          console.log('[Permissions] Camera & Microphone granted on site open.');
-          this.webrtc.localStream = stream;
-        }
-      }
-    } catch (e) {
-      console.warn('[Permissions] Initial prompt dismissed or denied:', e);
-    }
-  }
-
-  // 2. Socket.IO Lifecycle
+  // 1. Socket.IO Lifecycle
   initSocket() {
     this.socket = io({
       transports: ['websocket', 'polling'],
@@ -602,7 +582,9 @@ class MTalkApp {
 
   cancelQueue() {
     window.SoundEffects.playButtonClick();
+    this.isSearching = false;
     this.socket.emit('leave-queue');
+    this.webrtc.stopLocalMedia();
   }
 
   nextStranger() {
@@ -622,6 +604,7 @@ class MTalkApp {
   hangUpCall(emit = true, pushHistory = true) {
     window.SoundEffects.playButtonClick();
     this.endCallCleanup(true);
+    this.webrtc.stopLocalMedia();
     if (emit) {
       this.socket.emit('hang-up');
     }
@@ -985,6 +968,12 @@ class MTalkApp {
   // 8. Screen & UI Switching
   showScreen(screenName, pushHistory = true) {
     this.currentScreen = screenName;
+
+    // Release camera and microphone whenever returning to lobby
+    if (screenName === 'lobby') {
+      this.webrtc?.stopLocalMedia();
+    }
+
     document.querySelectorAll('.view-screen').forEach(el => el.classList.remove('active'));
     const target = document.getElementById(`screen-${screenName}`);
     if (target) target.classList.add('active');

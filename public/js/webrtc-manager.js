@@ -493,6 +493,7 @@ class WebRTCManager {
 
   reset() {
     this.closePeerConnection();
+    this.stopLocalMedia();
     this.isMuted = false;
     this.isVideoOff = false;
     this.isSpeakerMuted = false;
