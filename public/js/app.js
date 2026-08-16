@@ -80,6 +80,7 @@ class MTalkApp {
     this.callStartTime = null;
     this.callTimerInterval = null;
     this.wakeLock = null;
+    this.currentScreen = 'lobby';
 
     // Visualizers
     this.localVisualizer = null;
@@ -99,11 +100,76 @@ class MTalkApp {
     this.loadStats();
     this.initAudioVisualizers();
     this.setupMobileGestures();
+    this.setupHistoryNavigation();
     this.refreshIcons();
-
 
     // Ask camera & microphone permissions immediately upon opening site
     this.promptPermissionsOnLoad();
+  }
+
+  setupHistoryNavigation() {
+    try {
+      window.history.replaceState({ screen: 'lobby', modal: null }, '', window.location.pathname);
+    } catch (e) {
+      console.warn('History replaceState error:', e);
+    }
+
+    window.addEventListener('popstate', (e) => {
+      const state = e.state;
+      console.log('[Back Navigation] Popstate triggered:', state);
+
+      // 1. If any modal is active, close it and prevent leaving
+      const activeModal = document.querySelector('.modal-overlay.active');
+      if (activeModal) {
+        activeModal.classList.remove('active');
+        // Push current screen state back so next back press handles the screen
+        try {
+          window.history.pushState({ screen: this.currentScreen, modal: null }, '', window.location.pathname);
+        } catch (err) {}
+        return;
+      }
+
+      // 2. If mobile chat drawer is open, close it
+      const sidebar = document.getElementById('chatSidebar');
+      if (sidebar && sidebar.classList.contains('chat-panel-mobile-visible')) {
+        sidebar.classList.remove('chat-panel-mobile-visible');
+        sidebar.classList.add('chat-panel-mobile-hidden');
+        document.getElementById('chatOverlay')?.classList.add('hidden');
+        try {
+          window.history.pushState({ screen: this.currentScreen, modal: null }, '', window.location.pathname);
+        } catch (err) {}
+        return;
+      }
+
+      // 3. If in radar / matchmaking queue, cancel search and return to lobby
+      if (this.isSearching) {
+        this.cancelQueue();
+        this.showScreen('lobby', false);
+        return;
+      }
+
+      // 4. If in active call or text chat, hang up and return to lobby
+      if (this.isInCall) {
+        this.hangUpCall(true, false);
+        this.showScreen('lobby', false);
+        return;
+      }
+
+      // 5. If already in lobby, ensure we don't exit the app on single back press
+      if (this.currentScreen === 'lobby') {
+        try {
+          window.history.pushState({ screen: 'lobby', modal: null }, '', window.location.pathname);
+        } catch (err) {}
+        return;
+      }
+
+      // 6. Navigate to screen indicated by state or fallback to lobby
+      if (state && state.screen) {
+        this.showScreen(state.screen, false);
+      } else {
+        this.showScreen('lobby', false);
+      }
+    });
   }
 
   refreshIcons() {
@@ -553,11 +619,13 @@ class MTalkApp {
     });
   }
 
-  hangUpCall() {
+  hangUpCall(emit = true, pushHistory = true) {
     window.SoundEffects.playButtonClick();
     this.endCallCleanup(true);
-    this.socket.emit('hang-up');
-    this.showScreen('lobby');
+    if (emit) {
+      this.socket.emit('hang-up');
+    }
+    this.showScreen('lobby', pushHistory);
   }
 
   endCallCleanup(fullReset = true) {
@@ -782,9 +850,7 @@ class MTalkApp {
 
   // 6. Mini-Games & Icebreakers
   openGameModal(gameType = 'tictactoe', isMyTurn = true) {
-    const modal = document.getElementById('modal-games');
-    if (!modal) return;
-    modal.classList.add('active');
+    this.openModal('modal-games');
 
     if (gameType === 'tictactoe') {
       this.gameManager.startTicTacToe(isMyTurn);
@@ -917,10 +983,19 @@ class MTalkApp {
   }
 
   // 8. Screen & UI Switching
-  showScreen(screenName) {
+  showScreen(screenName, pushHistory = true) {
+    this.currentScreen = screenName;
     document.querySelectorAll('.view-screen').forEach(el => el.classList.remove('active'));
     const target = document.getElementById(`screen-${screenName}`);
     if (target) target.classList.add('active');
+
+    if (pushHistory) {
+      try {
+        if (window.history.state?.screen !== screenName) {
+          window.history.pushState({ screen: screenName, modal: null }, '', window.location.pathname);
+        }
+      } catch (e) {}
+    }
 
     // Show/hide mobile chat toggle in header depending on screen
     const chatToggle = document.getElementById('mobileChatToggle');
@@ -943,6 +1018,24 @@ class MTalkApp {
     }
 
     this.refreshIcons();
+  }
+
+  openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.classList.add('active');
+      try {
+        window.history.pushState({ screen: this.currentScreen || 'lobby', modal: modalId }, '', window.location.pathname);
+      } catch (e) {}
+      this.refreshIcons();
+    }
+  }
+
+  closeModal(modalElOrId) {
+    const modal = typeof modalElOrId === 'string' ? document.getElementById(modalElOrId) : modalElOrId;
+    if (modal) {
+      modal.classList.remove('active');
+    }
   }
 
   setupInCallPartnerUI() {
@@ -1112,8 +1205,7 @@ class MTalkApp {
 
     // VIP Paid Modals Triggers
     const openVipModal = () => {
-      document.getElementById('modal-vip')?.classList.add('active');
-      this.refreshIcons();
+      this.openModal('modal-vip');
     };
 
     document.getElementById('btn-open-vip')?.addEventListener('click', openVipModal);
@@ -1274,8 +1366,7 @@ class MTalkApp {
     document.getElementById('btn-text-add-friend')?.addEventListener('click', () => this.sendFriendRequest());
     document.getElementById('btn-open-friends')?.addEventListener('click', () => {
       this.loadFriendsList();
-      document.getElementById('modal-friends')?.classList.add('active');
-      this.refreshIcons();
+      this.openModal('modal-friends');
     });
 
     // Mini-Games Modal Trigger
@@ -1305,8 +1396,7 @@ class MTalkApp {
     // Icebreaker trigger
     const triggerIcebreaker = () => {
       this.drawNewIcebreaker();
-      document.getElementById('modal-icebreaker')?.classList.add('active');
-      this.refreshIcons();
+      this.openModal('modal-icebreaker');
     };
     document.getElementById('btn-open-icebreaker')?.addEventListener('click', triggerIcebreaker);
     document.getElementById('btn-text-icebreaker')?.addEventListener('click', triggerIcebreaker);
@@ -1371,8 +1461,7 @@ class MTalkApp {
         const isSelected = (b.dataset.avatar === this.avatar) || (b.dataset.avatar === 'avatar-fox' && !this.avatar);
         b.style.borderColor = isSelected ? '#6366f1' : 'transparent';
       });
-      document.getElementById('modal-profile')?.classList.add('active');
-      this.refreshIcons();
+      this.openModal('modal-profile');
     });
 
     document.getElementById('btn-save-profile')?.addEventListener('click', () => {
@@ -1406,8 +1495,7 @@ class MTalkApp {
 
     // Report User Modal
     const triggerReport = () => {
-      document.getElementById('modal-report')?.classList.add('active');
-      this.refreshIcons();
+      this.openModal('modal-report');
     };
     document.getElementById('btn-open-report')?.addEventListener('click', triggerReport);
     document.getElementById('btn-text-report')?.addEventListener('click', triggerReport);

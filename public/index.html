@@ -13,7 +13,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=1.5.0" />
+  <link rel="stylesheet" href="css/style.css?v=1.6.0" />
   
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -25,12 +25,7 @@
     <header class="app-header h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 border-b border-[#27272a] bg-[#09090b]/90 backdrop-blur-md z-30 flex-shrink-0">
       <!-- Brand Logo -->
       <div class="brand-wrapper flex items-center gap-2.5 cursor-pointer group" onclick="window.app && window.app.showScreen('lobby')">
-        <div class="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center shadow-md shadow-indigo-600/30 group-hover:bg-indigo-500 transition-colors">
-          <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M2 22l10-20 10 20H2z" stroke-linejoin="round"/>
-            <path d="M12 12v6" stroke-linecap="round"/>
-          </svg>
-        </div>
+        <img src="assets/logo.svg" alt="MTalk Logo" class="w-9 h-9 rounded-xl shadow-md shadow-indigo-600/30 group-hover:scale-105 transition-transform" />
         <div class="flex flex-col">
           <span class="text-xl font-extrabold tracking-tight text-white leading-none">MTalk</span>
           <span class="text-[10px] font-semibold text-indigo-400 uppercase tracking-widest leading-none mt-1">WebRTC</span>
@@ -479,8 +474,8 @@
             <!-- Input Area -->
             <div class="p-2.5 sm:p-3.5 bg-[#121215] border-t border-[#27272a] flex-shrink-0">
               <div class="relative flex items-center">
-                <input type="text" id="chatInput" class="custom-input rounded-full pr-12 text-sm" placeholder="Type a message..." maxlength="500" autocomplete="off" />
-                <button id="sendBtn" class="absolute right-1.5 w-8 h-8 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center transition-colors shadow-sm flex-shrink-0" title="Send">
+                <input type="text" id="chatInput" class="custom-input rounded-md pr-12 text-sm" placeholder="Type a message..." maxlength="500" autocomplete="off" />
+                <button id="sendBtn" class="absolute right-1.5 w-8 h-8 rounded-md bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center transition-colors shadow-sm flex-shrink-0" title="Send">
                   <i class="fas fa-paper-plane text-xs -ml-0.5"></i>
                 </button>
               </div>
@@ -606,8 +601,8 @@
             <!-- Main Input Row -->
             <div class="flex items-center gap-2">
               <div class="relative flex-1 flex items-center">
-                <input type="text" id="textChatInput" class="custom-input rounded-full pl-4 pr-12 py-3 text-sm md:text-base" placeholder="Type a message..." maxlength="500" autocomplete="off" />
-                <button id="textSendBtn" class="absolute right-1.5 w-8 h-8 md:w-9 md:h-9 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center transition-colors shadow-sm" title="Send">
+                <input type="text" id="textChatInput" class="custom-input rounded-md pl-4 pr-12 py-3 text-sm md:text-base" placeholder="Type a message..." maxlength="500" autocomplete="off" />
+                <button id="textSendBtn" class="absolute right-1.5 w-8 h-8 md:w-9 md:h-9 rounded-md bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center transition-colors shadow-sm" title="Send">
                   <i class="fas fa-paper-plane text-xs md:text-sm -ml-0.5"></i>
                 </button>
               </div>
@@ -929,9 +924,9 @@
 
   <!-- Client JavaScript Modules -->
   <script src="/socket.io/socket.io.js"></script>
-  <script src="js/audio-effects.js?v=1.5.0"></script>
-  <script src="js/games-icebreakers.js?v=1.5.0"></script>
-  <script src="js/webrtc-manager.js?v=1.5.0"></script>
-  <script src="js/app.js?v=1.5.0"></script>
+  <script src="js/audio-effects.js?v=1.6.0"></script>
+  <script src="js/games-icebreakers.js?v=1.6.0"></script>
+  <script src="js/webrtc-manager.js?v=1.6.0"></script>
+  <script src="js/app.js?v=1.6.0"></script>
 </body>
 </html>

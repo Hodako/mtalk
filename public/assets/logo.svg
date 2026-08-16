@@ -1,1 +1,39 @@
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 1369"><defs><style>.cls-1,.cls-2{fill:none;stroke:#fff;stroke-miterlimit:10;}.cls-1{stroke-linecap:round;stroke-width:50px;}.cls-2{stroke-width:40px;}.cls-3{fill:#fff;}</style></defs><path class="cls-1" d="M207,892.86,612.44,190.59a31.83,31.83,0,0,1,55.12,0L1073,892.86"/><line class="cls-1" x1="179.43" y1="517.86" x2="1100.57" y2="517.86"/><line class="cls-2" x1="206.99" y1="897.78" x2="1073.01" y2="897.78"/><text/><path class="cls-3" d="M237.53,1234.36H186L165,1176.15H89.51l-21,58.21H17.33l89.15-232.17h41.24Zm-87.81-99.78-22.62-62.21-22.29,62.21Z"/><path class="cls-3" d="M308.38,1234.36H260.81V1002.19h47.57Z"/><path class="cls-3" d="M475.68,1135.57c3,2.67,6.66,8.32,9.32,12.31l55.21,86.48H485l-46.57-77.83c-7-12-10-15.63-24.28-15.63H402.51v93.46H354.94V1002.19h85.15c45.24,0,80.5,21.62,80.5,70.52C520.59,1101.65,503,1126.26,475.68,1135.57Zm-35.25-87.48H402.51V1099h37.92c18.29,0,32.59-4.66,32.59-26C473,1052.08,458.06,1048.09,440.43,1048.09Z"/><path class="cls-3" d="M716.84,1022.48H643v211.88H622.37V1022.48H548.53v-20.29H716.84Z"/><path class="cls-3" d="M903.77,1234.36H881.82l-26.28-68.85H749.77l-25.95,68.85H701.54l89.14-232.17h24Zm-55.21-87.14-45.9-121.08-45.91,121.08Z"/><path class="cls-3" d="M1067.42,1234.36h-135V1002.19H953v212.88h114.42Z"/><path class="cls-3" d="M1102,1234.36V1002.19h20.62v232.17Zm47.23-117.08,104.11,117.08h-26.28L1125.3,1118l95.46-115.76h24Z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="mtalk-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818cf8"/>
+      <stop offset="50%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+    <linearGradient id="mtalk-accent" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#6366f1" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <!-- Outer Rounded Shield / Rounded Rectangle -->
+  <rect x="24" y="24" width="464" height="464" rx="120" fill="#121216" stroke="#27272a" stroke-width="8"/>
+  
+  <!-- Subtle Background Glow -->
+  <circle cx="256" cy="240" r="160" fill="url(#mtalk-grad)" opacity="0.15" filter="url(#glow)"/>
+
+  <!-- MTalk Dynamic "M" with Speech Bubble Tail -->
+  <g filter="url(#glow)">
+    <!-- Main Left Stem -->
+    <path d="M128 352V180C128 162.327 142.327 148 160 148C177.673 148 192 162.327 192 180V352" stroke="url(#mtalk-grad)" stroke-width="36" stroke-linecap="round"/>
+    
+    <!-- Central Flowing Waves (M Peaks) -->
+    <path d="M192 200L240 272C247.5 283.5 264.5 283.5 272 272L320 200" stroke="url(#mtalk-grad)" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Right Stem with Speech Bubble Curvature -->
+    <path d="M320 352V180C320 162.327 334.327 148 352 148C369.673 148 384 162.327 384 180V310C384 338 360 360 332 360H290L244 394C236 400 224 394 224 384V360" stroke="url(#mtalk-grad)" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Audio / Connection Pulsing Dots -->
+    <circle cx="160" cy="180" r="12" fill="#38bdf8"/>
+    <circle cx="256" cy="274" r="14" fill="#a855f7"/>
+    <circle cx="352" cy="180" r="12" fill="#38bdf8"/>
+  </g>
+</svg>

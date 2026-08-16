@@ -267,15 +267,15 @@ i, svg, [data-lucide], .lucide {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-/* 4. Inputs */
+/* 4. Inputs (Square Shape) */
 .custom-input, .input {
   display: flex;
   height: 2.75rem;
   width: 100%;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-sm);
   border: 1px solid var(--input);
   background-color: #121215;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.85rem;
   font-size: 0.875rem;
   color: var(--foreground);
   outline: none;
@@ -1515,17 +1515,17 @@ i, svg, [data-lucide], .lucide {
 }
 
 .toast-msg {
-  background: rgba(24, 24, 27, 0.95);
+  background: rgba(24, 24, 27, 0.96);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   color: #fafafa;
-  padding: 0.65rem 1.25rem;
-  border-radius: var(--radius-full);
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-sm);
   font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0.01em;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65), 0 0 1px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 1px rgba(255, 255, 255, 0.2);
   display: inline-flex;
   align-items: center;
   justify-content: center;
