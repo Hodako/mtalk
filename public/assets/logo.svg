@@ -1,50 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
   <defs>
-    <!-- Vibrant Indigo to Violet Gradient for Primary Talk Bubble -->
-    <linearGradient id="talk-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
+    <!-- Vibrant Modern Indigo & Cyan Gradient -->
+    <linearGradient id="talk-bubble-grad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#818cf8"/>
       <stop offset="60%" stop-color="#6366f1"/>
-      <stop offset="100%" stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
     </linearGradient>
 
-    <!-- Cyan to Sky Gradient for Intersecting Voice Wave Bubble -->
-    <linearGradient id="talk-grad-2" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#38bdf8"/>
-      <stop offset="60%" stop-color="#818cf8"/>
-      <stop offset="100%" stop-color="#c084fc"/>
-    </linearGradient>
-
-    <!-- Soft Glow Filter -->
-    <filter id="talk-glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#6366f1" flood-opacity="0.5"/>
+    <!-- Ambient Shadow Filter -->
+    <filter id="talk-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#6366f1" flood-opacity="0.4"/>
     </filter>
   </defs>
 
-  <!-- Group with Glow (Completely Transparent Background - No Frame, No Text) -->
-  <g filter="url(#talk-glow)">
-    
-    <!-- Primary Conversation Speech Bubble (Fluid Modern Silhouette) -->
-    <path d="M120 100C64.77 100 20 144.77 20 200C20 234.33 37.33 264.6 64 282.47V372C64 384.28 78.43 391.24 88.08 383.52L156.4 328.87C174.88 335.95 195.04 340 216 340C271.23 340 316 295.23 316 240C316 184.77 271.23 100 120 100Z" 
-          fill="url(#talk-grad-1)"/>
+  <g filter="url(#talk-shadow)">
+    <!-- Perfectly Centered Balanced Talking Speech Bubble -->
+    <path d="M32 8C18.745 8 8 18.297 8 31C8 37.684 11.026 43.702 15.932 47.935L13.12 55.438C12.784 56.335 13.665 57.216 14.562 56.88L22.955 53.733C25.795 54.887 28.826 55.534 32 55.534C45.255 55.534 56 45.237 56 32.534C56 19.831 45.255 8 32 8Z" 
+          fill="url(#talk-bubble-grad)"/>
 
-    <!-- Intersecting Secondary Talking Voice Bubble -->
-    <path d="M392 172C447.23 172 492 216.77 492 272C492 306.33 474.67 336.6 448 354.47V444C448 456.28 433.57 463.24 423.92 455.52L355.6 400.87C337.12 407.95 316.96 412 296 412C240.77 412 196 367.23 196 312C196 256.77 240.77 172 392 172Z" 
-          fill="url(#talk-grad-2)" 
-          opacity="0.88" 
-          style="mix-blend-mode: screen;"/>
-
-    <!-- Dynamic Audio / Speech Wave Bars (The "Talking" Voice Waves) -->
-    <!-- Bubble 1 Audio Waves -->
-    <rect x="92" y="196" width="12" height="48" rx="6" fill="#ffffff" opacity="0.95"/>
-    <rect x="120" y="172" width="12" height="96" rx="6" fill="#ffffff"/>
-    <rect x="148" y="184" width="12" height="72" rx="6" fill="#ffffff" opacity="0.95"/>
-    <rect x="176" y="208" width="12" height="24" rx="6" fill="#ffffff" opacity="0.85"/>
-
-    <!-- Bubble 2 Audio Waves -->
-    <rect x="324" y="280" width="12" height="24" rx="6" fill="#ffffff" opacity="0.85"/>
-    <rect x="352" y="256" width="12" height="72" rx="6" fill="#ffffff" opacity="0.95"/>
-    <rect x="380" y="244" width="12" height="96" rx="6" fill="#ffffff"/>
-    <rect x="408" y="268" width="12" height="48" rx="6" fill="#ffffff" opacity="0.95"/>
-
+    <!-- Crisp Center Audio / Voice Waves (The Talking Pulse) -->
+    <rect x="20" y="27" width="3.5" height="10" rx="1.75" fill="#ffffff" opacity="0.9"/>
+    <rect x="27" y="21" width="3.5" height="22" rx="1.75" fill="#ffffff"/>
+    <rect x="34" y="17" width="3.5" height="30" rx="1.75" fill="#ffffff"/>
+    <rect x="41" y="23" width="3.5" height="18" rx="1.75" fill="#ffffff" opacity="0.9"/>
   </g>
 </svg>

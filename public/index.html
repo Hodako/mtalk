@@ -13,7 +13,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=1.9.0" />
+  <link rel="stylesheet" href="css/style.css?v=2.0.0" />
   
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -25,8 +25,8 @@
     <header class="app-header h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 border-b border-[#27272a] bg-[#09090b]/90 backdrop-blur-md z-30 flex-shrink-0">
       <!-- Brand Logo -->
       <div class="brand-wrapper flex items-center gap-2.5 cursor-pointer group" onclick="window.app && window.app.showScreen('lobby')">
-        <img src="assets/logo.svg" alt="MTalk Logo" class="w-9 h-9 object-contain group-hover:scale-110 transition-transform filter drop-shadow-[0_4px_12px_rgba(99,102,241,0.4)]" />
-        <div class="flex flex-col">
+        <img src="assets/logo.svg" alt="MTalk Logo" class="w-8 h-8 md:w-9 md:h-9 object-contain flex-shrink-0 group-hover:scale-105 transition-transform" />
+        <div class="flex flex-col justify-center">
           <span class="text-xl font-extrabold tracking-tight text-white leading-none">MTalk</span>
           <span class="text-[10px] font-semibold text-indigo-400 uppercase tracking-widest leading-none mt-1">LIVE TALK</span>
         </div>
@@ -86,8 +86,20 @@
             </h1>
 
             <p class="hero-subtitle">
-              Jump into 1-on-1 crystal-clear voice talks, face-to-face video calls, or text chats. Safe, anonymous, and ultra-fast.
+              Safe, instant, and 1-on-1 conversations. You can skip or cancel anytime with zero wait.
             </p>
+
+            <div class="flex flex-wrap items-center gap-2.5 text-xs text-zinc-300 mb-2">
+              <span class="inline-flex items-center gap-1.5 bg-[#18181b] border border-[#27272a] px-2.5 py-1 rounded-md text-[11px] font-medium">
+                <i data-lucide="shield-check" style="width:13px; height:13px; color:#10b981;"></i> Safe & Anonymous
+              </span>
+              <span class="inline-flex items-center gap-1.5 bg-[#18181b] border border-[#27272a] px-2.5 py-1 rounded-md text-[11px] font-medium">
+                <i data-lucide="zap" style="width:13px; height:13px; color:#818cf8;"></i> Instant 1-on-1
+              </span>
+              <span class="inline-flex items-center gap-1.5 bg-[#18181b] border border-[#27272a] px-2.5 py-1 rounded-md text-[11px] font-medium">
+                <i data-lucide="skip-forward" style="width:13px; height:13px; color:#f59e0b;"></i> Skip Anytime
+              </span>
+            </div>
 
             <!-- 1. Mode Selector Cards -->
             <div class="modes-wrapper">
@@ -926,9 +938,9 @@
 
   <!-- Client JavaScript Modules -->
   <script src="/socket.io/socket.io.js"></script>
-  <script src="js/audio-effects.js?v=1.9.0"></script>
-  <script src="js/games-icebreakers.js?v=1.9.0"></script>
-  <script src="js/webrtc-manager.js?v=1.9.0"></script>
-  <script src="js/app.js?v=1.9.0"></script>
+  <script src="js/audio-effects.js?v=2.0.0"></script>
+  <script src="js/games-icebreakers.js?v=2.0.0"></script>
+  <script src="js/webrtc-manager.js?v=2.0.0"></script>
+  <script src="js/app.js?v=2.0.0"></script>
 </body>
 </html>
