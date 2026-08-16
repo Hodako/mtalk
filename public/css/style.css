@@ -696,25 +696,31 @@ i, svg, [data-lucide], .lucide {
 
 .lobby-visual-card {
   width: 100%;
-  max-width: 400px;
-  background-color: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: 2rem;
+  max-width: 520px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  gap: 1.25rem;
+  box-shadow: none;
 }
 
 .hero-svg-img {
   width: 100%;
-  max-height: 240px;
-  object-fit: cover;
-  border-radius: var(--radius-lg);
-  box-shadow: 0 12px 30px rgba(99, 102, 241, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-height: 380px;
+  object-fit: contain;
+  border-radius: var(--radius-xl);
+  border: none;
+  box-shadow: none;
+  filter: drop-shadow(0 15px 35px rgba(99, 102, 241, 0.2));
+  transition: transform 0.3s ease;
+}
+
+.hero-svg-img:hover {
+  transform: translateY(-4px) scale(1.01);
 }
 
 .avatar-option-btn {
