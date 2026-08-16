@@ -1,0 +1,36 @@
+{
+  "name": "mtalk",
+  "version": "1.0.0",
+  "description": "MTalk - Modern Real-Time WebRTC Random Voice, Video & Text Chat Platform",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "build": "node -e \"console.log('Build complete - Static assets ready.')\""
+  },
+  "keywords": [
+    "webrtc",
+    "chat",
+    "random-chat",
+    "voice-call",
+    "video-call",
+    "airtalk",
+    "omegle",
+    "socketio"
+  ],
+  "author": "MTalk Team",
+  "license": "MIT",
+  "dependencies": {
+    "bad-words": "^4.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "pg": "^8.13.1",
+    "selfsigned": "^5.5.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.3",
+    "sqlite3": "^5.1.7",
+    "uuid": "^11.0.5"
+  }
+}

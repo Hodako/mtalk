@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>MTalk - Modern Anonymous Video & Voice Chat</title>
+  <meta name="description" content="MTalk is a high-speed, anonymous WebRTC random video, audio, and text chat platform. Connect instantly with strangers worldwide." />
+  <meta name="keywords" content="random chat, voice chat, video chat, webrtc, omegle alternative, airtalk" />
+  <meta name="theme-color" content="#09090b" />
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  
+  <!-- Tailwind CSS & FontAwesome Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=1.4.0" />
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-[#09090b] text-[#fafafa] flex flex-col h-screen w-full overflow-hidden antialiased selection:bg-indigo-500 selection:text-white">
+  <div id="app-root" class="flex flex-col h-full w-full">
+
+    <!-- Top Navigation Header (shadcn Navbar) -->
+    <header class="app-header h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 border-b border-[#27272a] bg-[#09090b]/90 backdrop-blur-md z-30 flex-shrink-0">
+      <!-- Brand Logo -->
+      <div class="brand-wrapper flex items-center gap-2.5 cursor-pointer group" onclick="window.app && window.app.showScreen('lobby')">
+        <div class="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center shadow-md shadow-indigo-600/30 group-hover:bg-indigo-500 transition-colors">
+          <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M2 22l10-20 10 20H2z" stroke-linejoin="round"/>
+            <path d="M12 12v6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-xl font-extrabold tracking-tight text-white leading-none">MTalk</span>
+          <span class="text-[10px] font-semibold text-indigo-400 uppercase tracking-widest leading-none mt-1">WebRTC</span>
+        </div>
+      </div>
+
+      <!-- Center Status (Live Online count badge) -->
+      <div class="header-center-stats hidden md:flex items-center gap-2.5 bg-[#18181b] px-3.5 py-1.5 rounded-full border border-[#27272a] shadow-sm">
+        <div class="relative flex items-center justify-center">
+          <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
+          <div class="absolute w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping opacity-75"></div>
+        </div>
+        <span id="stat-online-count" class="text-xs font-semibold text-emerald-400">12,402 Online</span>
+      </div>
+
+      <!-- Right Header Actions -->
+      <div class="header-actions flex items-center gap-2.5">
+        <!-- VIP Pass Button -->
+        <button id="btn-open-vip" class="btn btn-sm btn-outline border-amber-500/30 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 hover:text-amber-200 gap-1.5 flex" title="VIP Pass">
+          <i class="fas fa-crown text-xs text-amber-400"></i>
+          <span class="hidden md:inline">VIP Pass</span>
+        </button>
+
+        <!-- Friends List Button -->
+        <button id="btn-open-friends" class="btn btn-sm btn-secondary gap-1.5 flex" title="Saved Friends">
+          <i class="fas fa-user-friends text-xs text-zinc-400"></i>
+          <span class="hidden md:inline">Friends</span>
+        </button>
+
+        <!-- Mobile Chat Toggle -->
+        <button id="mobileChatToggle" class="lg:hidden btn btn-icon btn-secondary relative w-9 h-9" title="Toggle Chat">
+          <i class="fas fa-comment-alt text-sm text-zinc-300"></i>
+          <span class="chat-unread-dot" id="chat-unread-dot"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="flex-1 flex flex-col overflow-hidden relative">
+
+      <!-- ==========================================================================
+           SCREEN 1: LOBBY (Landing Page)
+           ========================================================================== -->
+      <section id="screen-lobby" class="view-screen active">
+        <div class="lobby-container">
+          
+          <!-- Left Column -->
+          <div class="lobby-left-column">
+            
+            <div class="hero-badge">
+              <i data-lucide="sparkles" style="width:14px; height:14px; color:#818cf8;"></i>
+              <span>Anonymous Real-Time WebRTC</span>
+            </div>
+
+            <h1 class="hero-title">
+              Talk with Strangers.<br />
+              <span class="highlight">Make Real Connections.</span>
+            </h1>
+
+            <p class="hero-subtitle">
+              Jump into 1-on-1 crystal-clear voice talks, face-to-face video calls, or text chats. Safe, anonymous, and ultra-fast.
+            </p>
+
+            <!-- 1. Mode Selector Cards -->
+            <div class="modes-wrapper">
+              <span class="modes-selector-label">Select Chat Mode</span>
+              <div class="modes-grid">
+                
+                <!-- Voice Mode -->
+                <div class="mode-card selected" data-mode="voice" id="mode-card-voice">
+                  <div class="mode-icon-circle voice-icon">
+                    <i data-lucide="mic" style="width:22px; height:22px;"></i>
+                  </div>
+                  <div class="mode-name">Voice Talk</div>
+                  <div class="mode-desc">Audio Only</div>
+                  <span class="mode-badge">Hot</span>
+                </div>
+
+                <!-- Video Mode -->
+                <div class="mode-card" data-mode="video" id="mode-card-video">
+                  <div class="mode-icon-circle video-icon">
+                    <i data-lucide="video" style="width:22px; height:22px;"></i>
+                  </div>
+                  <div class="mode-name">Video Call</div>
+                  <div class="mode-desc">Cam + Audio</div>
+                </div>
+
+                <!-- Text Mode -->
+                <div class="mode-card" data-mode="text" id="mode-card-text">
+                  <div class="mode-icon-circle text-icon">
+                    <i data-lucide="message-square" style="width:22px; height:22px;"></i>
+                  </div>
+                  <div class="mode-name">Text Chat</div>
+                  <div class="mode-desc">Pure Instant Chat</div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- 2. Start Talking Button -->
+            <button id="btn-start-talk" class="btn-start-match">
+              <i data-lucide="zap" style="width:22px; height:22px;"></i>
+              <span id="start-talk-btn-text">START TALKING NOW</span>
+              <i data-lucide="arrow-right" style="width:22px; height:22px;"></i>
+            </button>
+
+            <!-- 3. Collapsible Matching Filters -->
+            <div class="filters-accordion-wrapper">
+              <div class="filters-accordion-header" id="btn-toggle-filters">
+                <div class="filters-header-title">
+                  <i data-lucide="sliders-horizontal" style="width:16px; height:16px; color:#818cf8;"></i>
+                  <span>Matching Filters & Interests</span>
+                  <span class="vip-tag-badge">
+                    <i data-lucide="crown" style="width:11px; height:11px;"></i> VIP
+                  </span>
+                </div>
+                <i data-lucide="chevron-down" id="filters-chevron-icon" class="chevron-icon"></i>
+              </div>
+
+              <div class="filters-panel collapsed" id="filters-collapsible-panel">
+                <div class="filter-row">
+                  
+                  <!-- Country Filter -->
+                  <div class="filter-group paid-filter-box" id="country-filter-container">
+                    <label>Country / Region</label>
+                    <div class="paid-select-mock" id="btn-paid-country">
+                      <div class="flex items-center gap-2">
+                        <img src="assets/filter_country.webp" alt="Country" class="w-4 h-4 rounded" />
+                        <span id="selected-country-text">🌍 Global (All Countries)</span>
+                      </div>
+                      <i data-lucide="chevron-down" style="width:14px; height:14px;"></i>
+                    </div>
+                  </div>
+
+                  <!-- Gender Filter -->
+                  <div class="filter-group paid-filter-box" id="gender-filter-container">
+                    <label>Gender Preference</label>
+                    <div class="paid-select-mock" id="btn-paid-gender">
+                      <div class="flex items-center gap-2">
+                        <i data-lucide="users" style="width:15px; height:15px; color:#818cf8;"></i>
+                        <span id="selected-gender-text">✨ Anyone (Free)</span>
+                      </div>
+                      <i data-lucide="chevron-down" style="width:14px; height:14px;"></i>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Topic Tags Cloud -->
+                <div class="flex flex-col gap-2">
+                  <label class="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
+                    Interests & Conversation Topics
+                  </label>
+                  <div id="topics-tags-container" class="topics-container">
+                    <!-- Injected via JS -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Column -->
+          <div class="lobby-right-column">
+            <div class="lobby-visual-card">
+              <img src="assets/hero-connect.jpg" alt="MTalk Worldwide Connections" class="hero-svg-img" />
+              
+              <div class="user-quick-profile-pill" id="user-profile-pill" title="Click to customize profile">
+                <div class="avatar-badge user-display-avatar w-7 h-7 rounded-full overflow-hidden flex items-center justify-center">
+                  <img src="assets/avatar-fox.jpg" class="w-full h-full object-cover" alt="Avatar" />
+                </div>
+                <span class="quick-username user-display-nickname">Guest_1234</span>
+                <span class="edit-icon">
+                  <i data-lucide="edit-3" style="width:12px; height:12px;"></i> Edit
+                </span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ==========================================================================
+           SCREEN 2: RADAR MATCHMAKING QUEUE
+           ========================================================================== -->
+      <section id="screen-radar" class="view-screen">
+        <div class="radar-container">
+          <div class="radar-wrapper">
+            <div class="radar-ring"></div>
+            <div class="radar-ring"></div>
+            <div class="radar-ring"></div>
+            <div class="radar-ring"></div>
+            <div class="radar-sweep"></div>
+            <div class="radar-center-avatar user-display-avatar w-16 h-16 rounded-full overflow-hidden p-0.5 border-2 border-indigo-500/60 shadow-[0_0_25px_rgba(99,102,241,0.5)]">
+              <img src="assets/avatar-fox.jpg" class="w-full h-full object-cover rounded-full" alt="Radar Avatar" />
+            </div>
+          </div>
+
+          <div class="radar-info-box">
+            <div class="badge badge-emerald gap-2 py-1 px-3.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              <span id="radar-mode-text">Searching for someone...</span>
+            </div>
+            <h2 class="radar-heading mt-2">Connecting you with a stranger</h2>
+            <p class="radar-status-text">Safe, instant, and 1-on-1. You can skip or cancel anytime.</p>
+            
+            <div class="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#18181b] border border-[#27272a] text-xs text-zinc-400" id="radar-filter-summary">
+              <i data-lucide="globe" style="width:13px; height:13px; color:#818cf8;"></i>
+              <span id="radar-filter-tags">Global • All Topics</span>
+            </div>
+          </div>
+
+          <button id="btn-cancel-radar" class="btn btn-outline border-red-500/30 text-red-400 hover:bg-red-500/10 gap-2 px-6">
+            <i data-lucide="x" style="width:16px; height:16px;"></i>
+            <span>Cancel Search</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ==========================================================================
+           SCREEN 3: ACTIVE VIDEO & VOICE CALL STAGE (Desktop 2-Box & Dedicated Phone UI)
+           ========================================================================== -->
+      <section id="screen-call" class="view-screen">
+        <div class="flex flex-1 overflow-hidden relative w-full h-full call-stage-root">
+          
+          <!-- In-Call Matchmaking / Skipping Overlay -->
+          <div id="incall-search-overlay" class="incall-search-overlay" style="display:none;">
+            <div class="incall-overlay-card">
+              <div class="incall-radar-ring"></div>
+              <div class="incall-overlay-spinner">
+                <i data-lucide="compass" class="animate-spin text-indigo-400" style="width:28px; height:28px;"></i>
+              </div>
+              <div class="incall-overlay-title font-bold text-white text-base mt-2" id="incall-overlay-title">Finding someone new...</div>
+              <div class="incall-overlay-subtitle text-xs text-zinc-400">Connecting to next active stranger</div>
+              <div class="flex items-center gap-2 mt-3">
+                <button id="btn-overlay-cancel" class="btn btn-sm btn-outline border-zinc-700 text-zinc-300 hover:bg-zinc-800">
+                  <i data-lucide="x" style="width:14px; height:14px;"></i>
+                  <span>Cancel Search</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Call Stage Area (Viewports & Controls) -->
+          <div class="flex-1 flex flex-col min-w-0 bg-[#09090b] overflow-hidden relative h-full call-main-column">
+            
+            <!-- Features & Status Top Bar (Adaptive for Desktop & Phone) -->
+            <div class="call-top-bar flex items-center justify-between gap-2 p-2 sm:p-3 md:px-6 md:py-3 border-b border-[#27272a] bg-[#09090b]/80 backdrop-blur-md flex-shrink-0 z-20">
+              
+              <!-- Live Duration Timer Badge (Removed 'Connected' text) -->
+              <div class="flex items-center gap-1.5 font-medium flex-shrink-0">
+                <div id="callTimer" class="badge badge-emerald py-1 px-2.5 sm:px-3 text-xs whitespace-nowrap flex items-center gap-1.5 bg-emerald-950/40 text-emerald-400 border border-emerald-500/30 rounded-full font-mono">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span id="callTimerDisplay">00:00</span>
+                </div>
+              </div>
+
+              <!-- Center & Right Tools (Single Line Actions) -->
+              <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 call-top-tools">
+                <!-- Auto-Next Switch -->
+                <div class="flex items-center gap-1.5 sm:gap-2 bg-[#18181b] px-2 sm:px-3 py-1.5 rounded-full border border-[#27272a] flex-shrink-0">
+                  <span class="text-[11px] sm:text-xs font-semibold text-zinc-300 whitespace-nowrap hidden md:inline">Auto-Next</span>
+                  <div class="relative inline-block w-6 sm:w-7 align-middle select-none">
+                    <input type="checkbox" id="autoNextToggle" class="toggle-checkbox absolute block w-3 sm:w-3.5 h-3 sm:h-3.5 rounded-full bg-white border-2 appearance-none cursor-pointer z-10 top-0.5 left-0.5" checked />
+                    <label for="autoNextToggle" class="toggle-label block overflow-hidden h-3.5 sm:h-4 rounded-full bg-zinc-700 cursor-pointer"></label>
+                  </div>
+                </div>
+
+                <!-- Conversation Starter (Icebreaker Question) -->
+                <button id="btn-open-icebreaker" class="btn btn-sm btn-secondary flex-shrink-0" title="Conversation Starter Question">
+                  <i class="fas fa-snowflake text-indigo-400 text-xs sm:text-sm"></i>
+                  <span class="hidden md:inline whitespace-nowrap">Icebreaker</span>
+                </button>
+
+                <!-- Mini Games -->
+                <button id="btn-open-games" class="btn btn-sm btn-secondary flex-shrink-0" title="Mini Games">
+                  <i class="fas fa-gamepad text-purple-400 text-xs sm:text-sm"></i>
+                  <span class="hidden md:inline whitespace-nowrap">Games</span>
+                </button>
+
+                <!-- Add Friend -->
+                <button id="btn-add-friend" class="btn btn-sm btn-secondary flex-shrink-0" title="Add Friend">
+                  <i class="fas fa-user-plus text-emerald-400 text-xs sm:text-sm"></i>
+                  <span class="hidden md:inline whitespace-nowrap">Add Friend</span>
+                </button>
+
+                <!-- Report User -->
+                <button id="btn-open-report" class="btn btn-sm btn-destructive flex-shrink-0" title="Report User">
+                  <i class="far fa-flag text-xs sm:text-sm text-red-400"></i>
+                  <span class="hidden md:inline whitespace-nowrap">Report</span>
+                </button>
+              </div>
+
+            </div>
+
+            <!-- Video & Audio Stage Viewports (2-Box Grid Desktop / Dedicated Phone View) -->
+            <div class="video-containers-wrapper flex-1 flex flex-col md:flex-row gap-3 md:gap-4 p-3 sm:p-4 lg:px-6 pb-2 md:pb-3 overflow-hidden relative h-full">
+              
+              <!-- Stranger (Remote Viewport) -->
+              <div class="stranger-video-box relative flex-1 bg-[#121215] rounded-xl video-box-stranger overflow-hidden flex flex-col items-center justify-center border border-[#27272a] shadow-md">
+                <video id="strangerVideo" class="absolute inset-0 w-full h-full object-cover z-0 opacity-0 transition-opacity duration-300" autoplay playsinline></video>
+                
+                <!-- Stranger Voice / Audio Avatar Mode with Animated Aura Rings -->
+                <div id="strangerAvatar" class="relative z-10 flex flex-col items-center transition-opacity duration-300 stranger-avatar-container">
+                  <div class="voice-aura-rings">
+                    <div class="voice-aura-ring ring-1"></div>
+                    <div class="voice-aura-ring ring-2"></div>
+                    <div class="voice-aura-ring ring-3"></div>
+                    <div class="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-2 border-indigo-500/50 shadow-[0_0_35px_rgba(99,102,241,0.45)] relative z-10 bg-indigo-950">
+                      <img id="partner-voice-avatar" src="assets/avatar-panda.jpg" class="w-full h-full object-cover" alt="Stranger Avatar" />
+                    </div>
+                  </div>
+                  
+                  <div class="flex items-end gap-1 h-6 mt-4 opacity-75" id="strangerVisualizer">
+                    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                    <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                  </div>
+                  <p id="strangerStatusText" class="mt-2 text-zinc-400 text-xs sm:text-sm font-medium">Looking for someone...</p>
+                </div>
+
+                <!-- Stranger Floating Info Badge -->
+                <div class="partner-info-pill absolute bottom-3 left-3 sm:bottom-4 sm:left-4 flex items-center gap-2 z-20 bg-black/70 px-3 py-1.5 rounded-lg backdrop-blur-md border border-white/10 shadow-sm">
+                  <span id="partner-flag" class="country-flag-badge">🌍</span>
+                  <span id="partner-nickname" class="text-xs sm:text-sm font-semibold text-white truncate max-w-[120px] sm:max-w-none">Stranger</span>
+                </div>
+              </div>
+
+              <!-- Local User (Me - Side by Side on PC, Floating PiP on Phone) -->
+              <div class="local-video-box relative flex-1 bg-[#121215] rounded-xl video-box-me overflow-hidden flex flex-col items-center justify-center border border-[#27272a] shadow-md">
+                <video id="localVideo" class="absolute inset-0 w-full h-full object-cover z-0 transform scale-x-[-1] opacity-0 transition-opacity duration-300" autoplay muted playsinline></video>
+                
+                <div id="localAvatar" class="relative z-10 flex flex-col items-center">
+                  <div class="w-20 h-20 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 p-1 mb-2.5 md:mb-3.5 shadow-[0_0_30px_rgba(99,102,241,0.4)] flex items-center justify-center">
+                    <div class="w-full h-full bg-[#18181b] rounded-full overflow-hidden">
+                      <img src="assets/avatar-fox.jpg" class="user-display-avatar w-full h-full object-cover" alt="My Avatar" />
+                    </div>
+                  </div>
+                  
+                  <div class="flex items-end gap-1 h-5 md:h-6 visualizer-active opacity-85" id="localVisualizer">
+                    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                    <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                  </div>
+                </div>
+
+                <div class="local-info-pill absolute bottom-3 left-3 sm:bottom-4 sm:left-4 flex items-center gap-1.5 z-20 bg-black/70 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg backdrop-blur-md border border-white/10 shadow-sm">
+                  <span class="user-display-nickname text-xs sm:text-sm font-semibold text-white">Guest_2833</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Bottom Floating Control Dock (Single-Line, Perfectly Aligned Controls) -->
+            <div class="call-control-dock-wrapper p-2.5 sm:p-3 md:pb-5 flex items-center justify-center z-30 flex-shrink-0 bg-[#09090b]/95 md:bg-[#09090b]/90 backdrop-blur-xl border-t border-[#27272a]">
+              <div class="call-control-dock flex items-center justify-center gap-2 sm:gap-3 md:gap-4 flex-nowrap">
+                
+                <!-- Main Action (Skip/Next) Single-Line Pill Button -->
+                <button id="mainActionBtn" class="btn btn-default rounded-full px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 font-bold shadow-lg shadow-indigo-600/30 text-xs sm:text-sm md:text-base flex-shrink-0 gap-1.5 whitespace-nowrap" title="Skip to next stranger">
+                  <i class="fas fa-step-forward text-xs sm:text-sm md:text-base"></i>
+                  <span id="mainActionText" class="whitespace-nowrap">Skip</span>
+                </button>
+
+                <!-- Media Controls (Uniform Circular Buttons) -->
+                <button id="toggleMicBtn" class="btn btn-icon btn-secondary rounded-full w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex-shrink-0" title="Mute / Unmute Mic">
+                  <i class="fas fa-microphone text-sm sm:text-base text-zinc-300"></i>
+                </button>
+                
+                <button id="toggleCamBtn" class="btn btn-icon btn-secondary rounded-full w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex-shrink-0" title="Camera On / Off">
+                  <i class="fas fa-video text-sm sm:text-base text-zinc-300"></i>
+                </button>
+                
+                <!-- Flip Camera Button (Always Visible on Mobile for Front/Rear toggle) -->
+                <button id="btn-flip-camera" class="btn btn-icon btn-secondary rounded-full w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex-shrink-0" title="Flip Camera">
+                  <i class="fas fa-sync-alt text-sm sm:text-base text-zinc-300"></i>
+                </button>
+                
+                <!-- Speaker Button -->
+                <button id="btn-toggle-speaker" class="btn btn-icon btn-secondary rounded-full w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 hidden sm:inline-flex flex-shrink-0" title="Speaker Output">
+                  <i class="fas fa-volume-up text-sm sm:text-base text-zinc-300"></i>
+                </button>
+
+                <!-- Open Chat (Mobile Drawer Trigger) -->
+                <button id="openChatBtn" class="lg:hidden btn btn-icon btn-secondary rounded-full w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 relative flex-shrink-0" title="Open Chat">
+                  <i class="fas fa-comment text-sm sm:text-base text-zinc-300"></i>
+                  <span class="chat-unread-dot" id="chat-mobile-dot"></span>
+                </button>
+
+                <!-- Disconnect / Hang Up (Red Circular Button) -->
+                <button id="stopBtn" class="btn btn-icon btn-destructive rounded-full w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex-shrink-0" title="End Call">
+                  <i class="fas fa-phone-slash text-sm sm:text-base"></i>
+                </button>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Live Chat Sidebar (Right on PC, Sliding Drawer on Mobile) -->
+          <div id="chatSidebar" class="chat-panel chat-panel-mobile-hidden lg:relative lg:transform-none lg:w-[360px] xl:w-[400px] bg-[#121215] border-l border-[#27272a] flex flex-col flex-shrink-0 z-50 lg:z-auto h-full shadow-2xl">
+            
+            <!-- Chat Header -->
+            <div class="h-14 sm:h-16 flex items-center justify-between px-4 sm:px-5 border-b border-[#27272a] bg-[#121215] flex-shrink-0">
+              <div class="flex items-center gap-2.5 font-bold text-white text-sm sm:text-base">
+                <i class="far fa-comments text-indigo-400 text-base sm:text-lg"></i>
+                <span class="whitespace-nowrap">Live Chat</span>
+              </div>
+              <button id="closeChatBtn" class="btn btn-icon btn-ghost lg:hidden text-zinc-400 hover:text-white w-8 h-8 rounded-full">
+                <i class="fas fa-times text-sm sm:text-base"></i>
+              </button>
+            </div>
+
+            <!-- Connection Notice -->
+            <div class="p-2.5 sm:p-3.5 flex-shrink-0">
+              <div id="chatStatusNotice" class="badge badge-secondary w-full py-1.5 sm:py-2 justify-center text-xs text-zinc-300 whitespace-nowrap">
+                Waiting for next partner...
+              </div>
+            </div>
+
+            <!-- Chat Messages Log -->
+            <div id="chatLog" class="flex-1 overflow-y-auto p-3 sm:p-4 flex flex-col gap-2.5 sm:gap-3 text-sm chat-scroll">
+              <div class="text-center text-xs text-zinc-400 my-1 sm:my-2 font-medium bg-[#18181b] px-3 py-1 rounded-full border border-[#27272a] w-fit mx-auto whitespace-nowrap">
+                Connected to stranger! Say hello 👋
+              </div>
+            </div>
+
+            <!-- Typing Indicator -->
+            <div id="typingIndicator" class="hidden px-4 py-1.5 text-zinc-400 text-xs items-center gap-1.5 bg-[#121215] flex-shrink-0 border-t border-[#27272a]">
+              <span class="whitespace-nowrap">Stranger is typing</span>
+              <span class="flex gap-[3px] ml-1 pt-0.5">
+                <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full typing-dot"></div>
+                <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full typing-dot"></div>
+                <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full typing-dot"></div>
+              </span>
+            </div>
+
+            <!-- Reactions / Emoji Bar -->
+            <div class="px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-center gap-2 sm:gap-3 border-t border-[#27272a] flex-shrink-0 bg-[#121215]">
+              <button class="reaction-btn text-lg sm:text-xl">❤️</button>
+              <button class="reaction-btn text-lg sm:text-xl">😂</button>
+              <button class="reaction-btn text-lg sm:text-xl">🔥</button>
+              <button class="reaction-btn text-lg sm:text-xl">😲</button>
+              <button class="reaction-btn text-lg sm:text-xl">👏</button>
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-2.5 sm:p-3.5 bg-[#121215] border-t border-[#27272a] flex-shrink-0">
+              <div class="relative flex items-center">
+                <input type="text" id="chatInput" class="custom-input rounded-full pr-12 text-sm" placeholder="Type a message..." maxlength="500" autocomplete="off" />
+                <button id="sendBtn" class="absolute right-1.5 w-8 h-8 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center transition-colors shadow-sm flex-shrink-0" title="Send">
+                  <i class="fas fa-paper-plane text-xs -ml-0.5"></i>
+                </button>
+              </div>
+            </div>
+            
+          </div>
+          
+          <!-- Overlay for mobile chat -->
+          <div id="chatOverlay" class="fixed inset-0 bg-black/70 z-40 hidden lg:hidden backdrop-blur-sm transition-opacity"></div>
+        </div>
+      </section>
+
+      <!-- ==========================================================================
+           SCREEN 4: DEDICATED TEXT CHAT STAGE (WhatsApp / Telegram Professional Layout)
+           ========================================================================== -->
+      <section id="screen-text" class="view-screen">
+        <div class="flex flex-col flex-1 overflow-hidden bg-[#09090b] max-w-4xl mx-auto w-full border-x border-[#27272a] shadow-2xl relative h-full">
+          
+          <!-- WhatsApp-Style Top Header Bar -->
+          <div class="flex items-center justify-between gap-2 p-2 sm:p-3 sm:px-4 border-b border-[#27272a] bg-[#121215] flex-shrink-0 z-10 shadow-sm">
+            
+            <!-- Left: Back Button & Stranger Profile Info -->
+            <div class="flex items-center gap-1.5 sm:gap-3 min-w-0 flex-1">
+              <button id="textStopBtn" class="btn btn-icon btn-ghost w-8 h-8 rounded-full text-zinc-400 hover:text-white flex-shrink-0" title="Leave Chat">
+                <i class="fas fa-arrow-left text-xs sm:text-sm"></i>
+              </button>
+
+              <div class="relative flex-shrink-0">
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden bg-indigo-600 flex items-center justify-center text-sm sm:text-base shadow-md shadow-indigo-600/30 border border-white/10">
+                  <img id="textPartnerAvatar" src="assets/avatar-panda.jpg" class="w-full h-full object-cover" alt="Stranger Avatar" />
+                </div>
+                <span class="absolute bottom-0 right-0 w-2 h-2 bg-emerald-500 rounded-full border-2 border-[#121215]"></span>
+              </div>
+
+              <div class="flex flex-col min-w-0">
+                <div class="flex items-center gap-1 min-w-0">
+                  <span id="textPartnerNickname" class="font-bold text-xs sm:text-sm text-white truncate max-w-[75px] sm:max-w-[140px]">Stranger</span>
+                  <span id="textPartnerFlag" class="text-xs flex-shrink-0">🌍</span>
+                </div>
+                <div class="flex items-center gap-1 text-[10px] sm:text-[11px]">
+                  <span id="textPartnerStatus" class="text-emerald-400 font-medium whitespace-nowrap">online</span>
+                  <span id="textCallTimer" class="text-zinc-500 font-mono hidden whitespace-nowrap">• 00:00</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Tools: Icebreaker, Games, Friend, Auto-Next, Skip -->
+            <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+              <!-- Conversation Starter (Icebreaker) -->
+              <button id="btn-text-icebreaker" class="btn btn-icon btn-secondary w-7 h-7 sm:w-8 sm:h-8 rounded-full flex-shrink-0" title="Conversation Starter Topic">
+                <i class="fas fa-snowflake text-indigo-400 text-xs"></i>
+              </button>
+
+              <!-- Mini Games -->
+              <button id="btn-text-games" class="btn btn-icon btn-secondary w-7 h-7 sm:w-8 sm:h-8 rounded-full flex-shrink-0" title="Mini Games">
+                <i class="fas fa-gamepad text-purple-400 text-xs"></i>
+              </button>
+              
+              <!-- Add Friend -->
+              <button id="btn-text-add-friend" class="btn btn-icon btn-secondary w-7 h-7 sm:w-8 sm:h-8 rounded-full flex-shrink-0" title="Add Friend">
+                <i class="fas fa-user-plus text-emerald-400 text-xs"></i>
+              </button>
+
+              <!-- Auto-Next Switch -->
+              <div class="flex items-center gap-1 bg-[#18181b] px-1.5 sm:px-2 py-1 rounded-full border border-[#27272a] flex-shrink-0">
+                <span class="text-[10px] font-semibold text-zinc-400 hidden md:inline whitespace-nowrap">Auto</span>
+                <div class="relative inline-block w-5 align-middle select-none">
+                  <input type="checkbox" id="textAutoNextToggle" class="toggle-checkbox absolute block w-2.5 h-2.5 rounded-full bg-white border appearance-none cursor-pointer z-10 top-0.5 left-0.5" checked />
+                  <label for="textAutoNextToggle" class="toggle-label block overflow-hidden h-3 rounded-full bg-zinc-700 cursor-pointer"></label>
+                </div>
+              </div>
+
+              <!-- Main Skip / Next Button -->
+              <button id="textMainActionBtn" class="btn btn-default btn-sm rounded-full px-2.5 sm:px-3 py-1 font-bold shadow-md shadow-indigo-600/30 gap-1 flex-shrink-0 text-xs whitespace-nowrap" title="Skip to next stranger">
+                <i class="fas fa-step-forward text-[10px] sm:text-xs"></i> <span id="textMainActionText">Skip</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Connection Notice Pill -->
+          <div class="px-4 py-2 bg-[#121215]/60 flex-shrink-0 border-b border-[#27272a]/50 text-center">
+            <span id="textChatStatusNotice" class="badge badge-secondary text-xs text-zinc-300 py-1 px-4">
+              You are connected with a random stranger. Say hi!
+            </span>
+          </div>
+
+          <!-- WhatsApp-Style Messages Stream Log -->
+          <div id="textChatLog" class="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-3 text-sm md:text-base relative bg-[#09090b] chat-scroll">
+            <!-- Welcome State -->
+            <div id="welcomeState" class="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 opacity-70 pointer-events-none">
+              <i class="far fa-comments text-5xl mb-3 text-indigo-400/60"></i>
+              <p class="font-semibold text-base text-zinc-200">Say hello to start chatting 👋</p>
+              <p class="text-xs text-zinc-500 mt-1">Tap Skip or press Enter to begin.</p>
+            </div>
+          </div>
+
+          <!-- Typing Indicator -->
+          <div id="textTypingIndicator" class="hidden px-6 py-2 text-zinc-400 text-xs items-center gap-1.5 bg-[#121215] flex-shrink-0 border-t border-[#27272a]">
+            <span>Stranger is typing</span>
+            <span class="flex gap-[3px] ml-1 pt-0.5">
+              <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full typing-dot"></div>
+              <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full typing-dot"></div>
+              <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full typing-dot"></div>
+            </span>
+          </div>
+
+          <!-- WhatsApp-Style Input Area & Controls -->
+          <div class="bg-[#121215] border-t border-[#27272a] p-3 sm:px-4 flex-shrink-0 flex flex-col gap-2">
+            
+            <!-- Quick Emoji Reactions Strip -->
+            <div class="flex items-center justify-between px-1">
+              <div class="flex items-center gap-3">
+                <button class="reaction-btn text-xl">❤️</button>
+                <button class="reaction-btn text-xl">😂</button>
+                <button class="reaction-btn text-xl">🔥</button>
+                <button class="reaction-btn text-xl">👍</button>
+                <button class="reaction-btn text-xl">🎉</button>
+              </div>
+
+              <span class="text-[11px] text-zinc-500 font-medium hidden sm:inline">Press Enter ↵ to send</span>
+            </div>
+
+            <!-- Main Input Row -->
+            <div class="flex items-center gap-2">
+              <div class="relative flex-1 flex items-center">
+                <input type="text" id="textChatInput" class="custom-input rounded-full pl-4 pr-12 py-3 text-sm md:text-base" placeholder="Type a message..." maxlength="500" autocomplete="off" />
+                <button id="textSendBtn" class="absolute right-1.5 w-8 h-8 md:w-9 md:h-9 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center transition-colors shadow-sm" title="Send">
+                  <i class="fas fa-paper-plane text-xs md:text-sm -ml-0.5"></i>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ==========================================================================
+         MODALS / DIALOGS (shadcn Dialog style)
+         ========================================================================== -->
+
+    <!-- Permission Request Modal (Only used for Voice / Video, NOT Text) -->
+    <div class="modal-overlay" id="modal-permission">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <i data-lucide="shield-alert" style="color:#6366f1; width:20px; height:20px;"></i>
+            <span>Permissions Required</span>
+          </h3>
+          <button class="modal-close-btn">✕</button>
+        </div>
+        <div class="modal-body text-center">
+          <div class="text-4xl my-2">🎙️ 📹</div>
+          <h4 class="text-lg font-bold text-white mb-2">Enable Microphone & Camera</h4>
+          <p class="text-sm text-zinc-400 leading-relaxed mb-4">
+            MTalk requires microphone and camera access to connect you in voice and video chats. Please click <strong>Allow</strong> in your browser prompt.
+          </p>
+          <div class="bg-[#18181b] p-3 rounded-lg text-xs text-zinc-400 text-left border border-[#27272a] mb-4">
+            <strong>💡 If blocked:</strong> Tap the lock icon in your address bar and enable Microphone & Camera permissions.
+          </div>
+          <button id="btn-retry-permission" class="btn btn-default w-full py-3">
+            <span>Grant & Continue</span>
+            <i data-lucide="check" style="width:18px; height:18px;"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIP / Paid Upgrade Modal -->
+    <div class="modal-overlay" id="modal-vip">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <i data-lucide="crown" style="color:#f59e0b; width:20px; height:20px;"></i>
+            <span>Unlock VIP Matching</span>
+          </h3>
+          <button class="modal-close-btn">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="bg-gradient-to-br from-amber-500/15 to-orange-500/10 border border-amber-500/30 p-4 rounded-xl text-center">
+            <div class="text-3xl mb-1">👑 💎</div>
+            <h4 class="text-base font-bold text-amber-300">Filter by Country & Gender</h4>
+            <p class="text-xs text-zinc-300 mt-1">
+              Country-specific matching and gender preference filters are VIP features.
+            </p>
+          </div>
+
+          <div class="flex flex-col gap-2.5 my-2 text-xs text-zinc-300">
+            <div class="flex items-center gap-2">
+              <i data-lucide="check-circle-2" style="color:#10b981; width:16px; height:16px;"></i>
+              <span>Match specifically with United States, UK, Canada, Japan, etc.</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="check-circle-2" style="color:#10b981; width:16px; height:16px;"></i>
+              <span>Exclusive Female or Male gender preference priority</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="check-circle-2" style="color:#10b981; width:16px; height:16px;"></i>
+              <span>Zero queue wait times & unlimited talk minutes</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 my-1">
+            <div class="card p-3 border-amber-500/50 bg-amber-500/5 text-center cursor-pointer">
+              <span class="badge badge-amber text-[10px] py-0.5 px-2 mb-1">Popular</span>
+              <div class="font-bold text-sm text-white">VIP Monthly</div>
+              <div class="text-base font-extrabold text-amber-400">$4.99 <span class="text-[10px] text-zinc-400 font-normal">/ mo</span></div>
+            </div>
+            <div class="card p-3 text-center cursor-pointer hover:border-zinc-700">
+              <span class="badge badge-secondary text-[10px] py-0.5 px-2 mb-1">Coins</span>
+              <div class="font-bold text-sm text-white">500 Coins</div>
+              <div class="text-base font-extrabold text-zinc-200">$1.99</div>
+            </div>
+          </div>
+
+          <button id="btn-unlock-vip-pass" class="btn btn-default bg-amber-600 hover:bg-amber-500 text-white w-full py-3 shadow-md shadow-amber-600/30">
+            <i data-lucide="sparkles" style="width:16px; height:16px;"></i>
+            <span>Unlock VIP Access (Demo)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Friends Modal -->
+    <div class="modal-overlay" id="modal-friends">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <i data-lucide="users" style="color:#6366f1; width:20px; height:20px;"></i>
+            <span>Friend Book</span>
+          </h3>
+          <button class="modal-close-btn">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-zinc-400">Your Reconnect Friend Code</label>
+            <div class="flex items-center justify-between bg-[#09090b] border border-[#27272a] p-2.5 rounded-lg">
+              <span class="font-mono text-sm font-bold text-indigo-400" id="my-friend-code-display">MTALK-XXXX-XXXX</span>
+              <button class="btn btn-sm btn-secondary gap-1" id="btn-copy-friend-code">
+                <i data-lucide="copy" style="width:12px; height:12px;"></i>
+                <span>Copy</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2 mt-2">
+            <label class="text-xs font-semibold text-zinc-400">Saved Friends</label>
+            <div class="friends-items-list flex flex-col gap-2 max-h-48 overflow-y-auto" id="friends-list-container">
+              <!-- Injected via JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mini-Games Modal -->
+    <div class="modal-overlay" id="modal-games">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <i data-lucide="gamepad-2" style="color:#818cf8; width:20px; height:20px;"></i>
+            <span>In-Call Mini-Games</span>
+          </h3>
+          <button class="modal-close-btn">✕</button>
+        </div>
+        <div class="modal-body">
+          <!-- Tic-Tac-Toe -->
+          <div id="ttt-game-container">
+            <div class="text-center text-sm font-bold text-white mb-3" id="ttt-status">👉 Your Turn</div>
+            <div class="ttt-board-grid">
+              <div class="ttt-cell" id="ttt-cell-0"></div>
+              <div class="ttt-cell" id="ttt-cell-1"></div>
+              <div class="ttt-cell" id="ttt-cell-2"></div>
+              <div class="ttt-cell" id="ttt-cell-3"></div>
+              <div class="ttt-cell" id="ttt-cell-4"></div>
+              <div class="ttt-cell" id="ttt-cell-5"></div>
+              <div class="ttt-cell" id="ttt-cell-6"></div>
+              <div class="ttt-cell" id="ttt-cell-7"></div>
+              <div class="ttt-cell" id="ttt-cell-8"></div>
+            </div>
+          </div>
+
+          <!-- Rock Paper Scissors -->
+          <div id="rps-game-container" style="display:none;" class="text-center">
+            <div class="text-xs font-bold text-indigo-400 mb-1" id="rps-score">You 0 - 0 Partner</div>
+            <div class="text-sm font-bold text-white mb-4" id="rps-status">Pick your move!</div>
+            <div class="rps-choice-row">
+              <button class="rps-btn" data-choice="rock">✊</button>
+              <button class="rps-btn" data-choice="paper">✋</button>
+              <button class="rps-btn" data-choice="scissors">✌️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Icebreaker Modal -->
+    <div class="modal-overlay" id="modal-icebreaker">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <i data-lucide="lightbulb" style="color:#fbbf24; width:20px; height:20px;"></i>
+            <span>Conversation Starter</span>
+          </h3>
+          <button class="modal-close-btn">✕</button>
+        </div>
+        <div class="modal-body">
+          <div id="icebreaker-sender-badge" class="badge badge-secondary self-center text-indigo-400">
+            Topic Idea
+          </div>
+          <div class="icebreaker-card-view" id="icebreaker-question-text">
+            If you could wake up tomorrow in any city in the world, where would you go?
+          </div>
+          <button id="btn-draw-next-icebreaker" class="btn btn-default w-full py-3">
+            <i data-lucide="dices" style="width:16px; height:16px;"></i>
+            <span>Draw Next Question</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Edit Modal -->
+    <div class="modal-overlay" id="modal-profile">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <i data-lucide="user-cog" style="color:#6366f1; width:20px; height:20px;"></i>
+            <span>Your Profile</span>
+          </h3>
+          <button class="modal-close-btn">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="filter-group">
+            <label for="input-edit-nickname">Nickname</label>
+            <input type="text" id="input-edit-nickname" class="custom-input" maxlength="20" placeholder="Your nickname..." />
+          </div>
+
+          <div class="filter-group">
+            <label class="text-xs font-semibold text-zinc-400">Pick 3D Avatar</label>
+            <div class="grid grid-cols-3 gap-2.5 sm:gap-3">
+              <button type="button" class="avatar-option-btn p-1.5 bg-[#18181b] rounded-xl border-2 border-indigo-500 hover:border-indigo-400 transition-all flex flex-col items-center gap-1 group" data-avatar="avatar-fox">
+                <img src="assets/avatar-fox.jpg" class="w-12 h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="Fox Avatar" />
+                <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">Fox Gamer</span>
+              </button>
+              <button type="button" class="avatar-option-btn p-1.5 bg-[#18181b] rounded-xl border-2 border-transparent hover:border-indigo-400 transition-all flex flex-col items-center gap-1 group" data-avatar="avatar-panda">
+                <img src="assets/avatar-panda.jpg" class="w-12 h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="Panda Avatar" />
+                <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">Panda Chill</span>
+              </button>
+              <button type="button" class="avatar-option-btn p-1.5 bg-[#18181b] rounded-xl border-2 border-transparent hover:border-indigo-400 transition-all flex flex-col items-center gap-1 group" data-avatar="avatar-cat">
+                <img src="assets/avatar-cat.jpg" class="w-12 h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="Cyber Cat Avatar" />
+                <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">Cyber Cat</span>
+              </button>
+              <button type="button" class="avatar-option-btn p-1.5 bg-[#18181b] rounded-xl border-2 border-transparent hover:border-indigo-400 transition-all flex flex-col items-center gap-1 group" data-avatar="avatar-robot">
+                <img src="assets/avatar-robot.jpg" class="w-12 h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="AI Robot Avatar" />
+                <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">AI Bot</span>
+              </button>
+              <button type="button" class="avatar-option-btn p-1.5 bg-[#18181b] rounded-xl border-2 border-transparent hover:border-indigo-400 transition-all flex flex-col items-center gap-1 group" data-avatar="avatar-astro">
+                <img src="assets/avatar-astro.jpg" class="w-12 h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="Astronaut Avatar" />
+                <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">Astronaut</span>
+              </button>
+              <button type="button" class="avatar-option-btn p-1.5 bg-[#18181b] rounded-xl border-2 border-transparent hover:border-indigo-400 transition-all flex flex-col items-center gap-1 group" data-avatar="avatar-lion">
+                <img src="assets/avatar-lion.jpg" class="w-12 h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform pointer-events-none" alt="Golden Lion Avatar" />
+                <span class="text-[10px] font-semibold text-zinc-300 pointer-events-none">Gold Lion</span>
+              </button>
+            </div>
+          </div>
+
+          <button id="btn-save-profile" class="btn btn-default w-full py-3">
+            Save Profile
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Report Modal -->
+    <div class="modal-overlay" id="modal-report">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 class="modal-title text-red-400">
+            <i data-lucide="flag" style="width:20px; height:20px;"></i>
+            <span>Report User</span>
+          </h3>
+          <button class="modal-close-btn">✕</button>
+        </div>
+        <div class="modal-body">
+          <p class="text-xs text-zinc-400">
+            Help us keep MTalk safe and welcoming. Reports are investigated immediately.
+          </p>
+
+          <div class="filter-group">
+            <label for="report-reason-select">Violation Reason</label>
+            <select id="report-reason-select" class="custom-select">
+              <option value="inappropriate_behavior">Inappropriate Behavior</option>
+              <option value="harassment">Harassment / Bullying</option>
+              <option value="severe_inappropriate">Explicit / NSFW Content</option>
+              <option value="spam">Spam / Bots / Promotion</option>
+              <option value="underage">Underage User</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="report-details-input">Details (Optional)</label>
+            <textarea id="report-details-input" class="custom-input h-20 resize-none" rows="3" placeholder="Describe what happened..."></textarea>
+          </div>
+
+          <button id="btn-submit-report" class="btn btn-destructive w-full py-3">
+            Submit Report & Skip
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WebRTC Remote Audio Sink (Used only for Voice/Video Calls) -->
+    <audio id="remote-audio-sink" autoplay playsinline></audio>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container"></div>
+
+  </div>
+
+  <!-- Client JavaScript Modules -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/audio-effects.js?v=1.4.0"></script>
+  <script src="js/games-icebreakers.js?v=1.4.0"></script>
+  <script src="js/webrtc-manager.js?v=1.4.0"></script>
+  <script src="js/app.js?v=1.4.0"></script>
+</body>
+</html>
