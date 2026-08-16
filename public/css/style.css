@@ -210,6 +210,41 @@ i, svg, [data-lucide], .lucide {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+}
+
+.chat-unread-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 9px;
+  height: 9px;
+  background-color: #ef4444;
+  border-radius: 9999px;
+  border: 2px solid #121215;
+  display: none;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.chat-unread-dot.active {
+  display: block;
+  animation: unreadDotPulse 1.6s infinite;
+}
+
+@keyframes unreadDotPulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 5px rgba(239, 68, 68, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
 }
 
 .btn-pill {
