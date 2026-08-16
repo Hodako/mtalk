@@ -1,10 +1,46 @@
 /**
  * MTalk WebRTC Connection Manager
  * High-reliability RTCPeerConnection with Google, Mozilla STUN & OpenRelay TURN servers,
+ * Cross-browser compatibility (Chrome, Safari/iOS, Firefox, Edge, Android),
  * Symmetric NAT & Multi-Wi-Fi traversal, Promise-coordinated media acquisition,
  * race-condition free Offer/Answer exchange, ICE candidate buffering, automatic ICE restart,
  * and reliable remote track attachment.
  */
+
+// Universal Cross-Browser Polyfills (Safari iOS, Chrome, Firefox, Edge, Android)
+(function() {
+  if (typeof window === 'undefined') return;
+
+  window.RTCPeerConnection = window.RTCPeerConnection || 
+                             window.webkitRTCPeerConnection || 
+                             window.mozRTCPeerConnection;
+
+  window.RTCSessionDescription = window.RTCSessionDescription || 
+                                 window.webkitRTCSessionDescription || 
+                                 window.mozRTCSessionDescription;
+
+  window.RTCIceCandidate = window.RTCIceCandidate || 
+                           window.webkitRTCIceCandidate || 
+                           window.mozRTCIceCandidate;
+
+  if (!navigator.mediaDevices) {
+    navigator.mediaDevices = {};
+  }
+
+  if (!navigator.mediaDevices.getUserMedia) {
+    const legacyGetUserMedia = navigator.getUserMedia || 
+                               navigator.webkitGetUserMedia || 
+                               navigator.mozGetUserMedia || 
+                               navigator.msGetUserMedia;
+    if (legacyGetUserMedia) {
+      navigator.mediaDevices.getUserMedia = function(constraints) {
+        return new Promise(function(resolve, reject) {
+          legacyGetUserMedia.call(navigator, constraints, resolve, reject);
+        });
+      };
+    }
+  }
+})();
 
 const RTC_CONFIG = {
   iceServers: [

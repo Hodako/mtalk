@@ -30,7 +30,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=2.6.0" />
+  <link rel="stylesheet" href="css/style.css?v=2.7.0" />
   
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -343,7 +343,7 @@
               
               <!-- Stranger (Remote Viewport) -->
               <div class="stranger-video-box relative flex-1 bg-[#121215] rounded-xl video-box-stranger overflow-hidden flex flex-col items-center justify-center border border-[#27272a] shadow-md">
-                <video id="strangerVideo" class="absolute inset-0 w-full h-full object-cover z-0 opacity-0 transition-opacity duration-300" autoplay playsinline></video>
+                <video id="strangerVideo" class="absolute inset-0 w-full h-full object-cover z-0 opacity-0 transition-opacity duration-300" autoplay playsinline webkit-playsinline></video>
                 
                 <!-- Stranger Voice / Audio Avatar Mode with Animated Aura Rings -->
                 <div id="strangerAvatar" class="relative z-10 flex flex-col items-center transition-opacity duration-300 stranger-avatar-container">
@@ -373,7 +373,7 @@
 
               <!-- Local User (Me - Side by Side on PC, Floating PiP on Phone) -->
               <div class="local-video-box relative flex-1 bg-[#121215] rounded-xl video-box-me overflow-hidden flex flex-col items-center justify-center border border-[#27272a] shadow-md">
-                <video id="localVideo" class="absolute inset-0 w-full h-full object-cover z-0 transform scale-x-[-1] opacity-0 transition-opacity duration-300" autoplay muted playsinline></video>
+                <video id="localVideo" class="absolute inset-0 w-full h-full object-cover z-0 transform scale-x-[-1] opacity-0 transition-opacity duration-300" autoplay muted playsinline webkit-playsinline></video>
                 
                 <div id="localAvatar" class="relative z-10 flex flex-col items-center">
                   <div class="w-20 h-20 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 p-1 mb-2.5 md:mb-3.5 shadow-[0_0_30px_rgba(99,102,241,0.4)] flex items-center justify-center">
@@ -934,7 +934,7 @@
     </div>
 
     <!-- WebRTC Remote Audio Sink (Used only for Voice/Video Calls) -->
-    <audio id="remote-audio-sink" autoplay playsinline></audio>
+    <audio id="remote-audio-sink" autoplay playsinline webkit-playsinline preload="auto"></audio>
 
     <!-- Toast Notifications Container -->
     <div id="toast-container"></div>
@@ -943,9 +943,9 @@
 
   <!-- Client JavaScript Modules -->
   <script src="/socket.io/socket.io.js"></script>
-  <script src="js/audio-effects.js?v=2.6.0"></script>
-  <script src="js/games-icebreakers.js?v=2.6.0"></script>
-  <script src="js/webrtc-manager.js?v=2.6.0"></script>
-  <script src="js/app.js?v=2.6.0"></script>
+  <script src="js/audio-effects.js?v=2.7.0"></script>
+  <script src="js/games-icebreakers.js?v=2.7.0"></script>
+  <script src="js/webrtc-manager.js?v=2.7.0"></script>
+  <script src="js/app.js?v=2.7.0"></script>
 </body>
 </html>
