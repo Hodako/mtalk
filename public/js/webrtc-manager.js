@@ -15,8 +15,9 @@ const RTC_CONFIG = {
     { urls: 'stun:stun3.l.google.com:19302' },
     { urls: 'stun:stun4.l.google.com:19302' },
 
-    // Mozilla Public STUN
+    // Mozilla & Cloudflare Public STUN
     { urls: 'stun:stun.services.mozilla.com' },
+    { urls: 'stun:stun.cloudflare.com:3478' },
 
     // Sipgate Public STUN
     { urls: 'stun:stun.sipgate.net:10000' },
@@ -374,8 +375,12 @@ class WebRTCManager {
 
   async handleAnswer(answer) {
     if (!this.peerConnection || this.peerConnection.signalingState === 'closed') return;
+    if (this.peerConnection.signalingState !== 'have-local-offer') {
+      console.warn('[WebRTC] Skipping handleAnswer, current signalingState:', this.peerConnection.signalingState);
+      return;
+    }
     try {
-      console.log('[WebRTC] Handling answer...');
+      console.log('[WebRTC] Setting remote description from answer...');
       await this.peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
       this.hasRemoteDescription = true;
       await this.flushIceCandidates();
@@ -386,7 +391,7 @@ class WebRTCManager {
 
   async handleIceCandidate(candidate) {
     if (!candidate) return;
-    if (!this.peerConnection || !this.hasRemoteDescription || this.peerConnection.signalingState === 'closed') {
+    if (!this.peerConnection || !this.hasRemoteDescription || !this.peerConnection.remoteDescription || this.peerConnection.signalingState === 'closed') {
       this.iceCandidateQueue.push(candidate);
       return;
     }
@@ -398,9 +403,10 @@ class WebRTCManager {
   }
 
   async flushIceCandidates() {
-    if (!this.peerConnection || !this.hasRemoteDescription) return;
-    while (this.iceCandidateQueue.length > 0) {
-      const candidate = this.iceCandidateQueue.shift();
+    if (!this.peerConnection || !this.hasRemoteDescription || !this.peerConnection.remoteDescription) return;
+    const candidates = [...this.iceCandidateQueue];
+    this.iceCandidateQueue = [];
+    for (const candidate of candidates) {
       try {
         await this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
       } catch (err) {

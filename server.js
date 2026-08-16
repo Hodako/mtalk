@@ -143,6 +143,7 @@ app.get('/api/ice-servers', (req, res) => {
     { urls: 'stun:stun1.l.google.com:19302' },
     { urls: 'stun:stun2.l.google.com:19302' },
     { urls: 'stun:stun.services.mozilla.com' },
+    { urls: 'stun:stun.cloudflare.com:3478' },
     { urls: 'stun:stun.sipgate.net:10000' },
 
     // Free OpenRelay / Metered TURN Relay Servers (Handles Symmetric NAT & Strict Wi-Fi)
