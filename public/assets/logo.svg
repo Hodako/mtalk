@@ -1,39 +1,50 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
   <defs>
-    <linearGradient id="mtalk-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <!-- Vibrant Indigo to Violet Gradient for Primary Talk Bubble -->
+    <linearGradient id="talk-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#818cf8"/>
-      <stop offset="50%" stop-color="#6366f1"/>
-      <stop offset="100%" stop-color="#a855f7"/>
+      <stop offset="60%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#4f46e5"/>
     </linearGradient>
-    <linearGradient id="mtalk-accent" x1="0%" y1="100%" x2="100%" y2="0%">
+
+    <!-- Cyan to Sky Gradient for Intersecting Voice Wave Bubble -->
+    <linearGradient id="talk-grad-2" x1="0%" y1="100%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#38bdf8"/>
-      <stop offset="100%" stop-color="#818cf8"/>
+      <stop offset="60%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#c084fc"/>
     </linearGradient>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#6366f1" flood-opacity="0.45"/>
+
+    <!-- Soft Glow Filter -->
+    <filter id="talk-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#6366f1" flood-opacity="0.5"/>
     </filter>
   </defs>
 
-  <!-- Outer Rounded Shield / Rounded Rectangle -->
-  <rect x="24" y="24" width="464" height="464" rx="120" fill="#121216" stroke="#27272a" stroke-width="8"/>
-  
-  <!-- Subtle Background Glow -->
-  <circle cx="256" cy="240" r="160" fill="url(#mtalk-grad)" opacity="0.15" filter="url(#glow)"/>
+  <!-- Group with Glow (Completely Transparent Background - No Frame, No Text) -->
+  <g filter="url(#talk-glow)">
+    
+    <!-- Primary Conversation Speech Bubble (Fluid Modern Silhouette) -->
+    <path d="M120 100C64.77 100 20 144.77 20 200C20 234.33 37.33 264.6 64 282.47V372C64 384.28 78.43 391.24 88.08 383.52L156.4 328.87C174.88 335.95 195.04 340 216 340C271.23 340 316 295.23 316 240C316 184.77 271.23 100 120 100Z" 
+          fill="url(#talk-grad-1)"/>
 
-  <!-- MTalk Dynamic "M" with Speech Bubble Tail -->
-  <g filter="url(#glow)">
-    <!-- Main Left Stem -->
-    <path d="M128 352V180C128 162.327 142.327 148 160 148C177.673 148 192 162.327 192 180V352" stroke="url(#mtalk-grad)" stroke-width="36" stroke-linecap="round"/>
-    
-    <!-- Central Flowing Waves (M Peaks) -->
-    <path d="M192 200L240 272C247.5 283.5 264.5 283.5 272 272L320 200" stroke="url(#mtalk-grad)" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/>
-    
-    <!-- Right Stem with Speech Bubble Curvature -->
-    <path d="M320 352V180C320 162.327 334.327 148 352 148C369.673 148 384 162.327 384 180V310C384 338 360 360 332 360H290L244 394C236 400 224 394 224 384V360" stroke="url(#mtalk-grad)" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/>
-    
-    <!-- Audio / Connection Pulsing Dots -->
-    <circle cx="160" cy="180" r="12" fill="#38bdf8"/>
-    <circle cx="256" cy="274" r="14" fill="#a855f7"/>
-    <circle cx="352" cy="180" r="12" fill="#38bdf8"/>
+    <!-- Intersecting Secondary Talking Voice Bubble -->
+    <path d="M392 172C447.23 172 492 216.77 492 272C492 306.33 474.67 336.6 448 354.47V444C448 456.28 433.57 463.24 423.92 455.52L355.6 400.87C337.12 407.95 316.96 412 296 412C240.77 412 196 367.23 196 312C196 256.77 240.77 172 392 172Z" 
+          fill="url(#talk-grad-2)" 
+          opacity="0.88" 
+          style="mix-blend-mode: screen;"/>
+
+    <!-- Dynamic Audio / Speech Wave Bars (The "Talking" Voice Waves) -->
+    <!-- Bubble 1 Audio Waves -->
+    <rect x="92" y="196" width="12" height="48" rx="6" fill="#ffffff" opacity="0.95"/>
+    <rect x="120" y="172" width="12" height="96" rx="6" fill="#ffffff"/>
+    <rect x="148" y="184" width="12" height="72" rx="6" fill="#ffffff" opacity="0.95"/>
+    <rect x="176" y="208" width="12" height="24" rx="6" fill="#ffffff" opacity="0.85"/>
+
+    <!-- Bubble 2 Audio Waves -->
+    <rect x="324" y="280" width="12" height="24" rx="6" fill="#ffffff" opacity="0.85"/>
+    <rect x="352" y="256" width="12" height="72" rx="6" fill="#ffffff" opacity="0.95"/>
+    <rect x="380" y="244" width="12" height="96" rx="6" fill="#ffffff"/>
+    <rect x="408" y="268" width="12" height="48" rx="6" fill="#ffffff" opacity="0.95"/>
+
   </g>
 </svg>
